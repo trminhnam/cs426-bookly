@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +19,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
@@ -29,16 +38,15 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private TextView registerTextView;
 
-//    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
-    private String email, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_modern);
 
-//        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait.");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -52,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startActivity(new Intent(LoginActivity.this, RegisterUserActivity.class));
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
                 Toast.makeText(LoginActivity.this, "Move to register an account", Toast.LENGTH_SHORT).show();
             }
         });
@@ -68,21 +76,22 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private String email, password;
     private void loginUser() {
 
-        if (!isConnectedToInternet(this)) {
+        if (!isConnectedToInternet(this)){
             showConnectToWifiDialog();
         }
 
         email = emailEditText.getText().toString().trim();
         password = passwordEditText.getText().toString().trim();
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             Toast.makeText(this, "Wrong email format", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (password.length() < 6) {
+        if (password.length() < 6){
             Toast.makeText(this, "Password length must be longer than 5", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -90,20 +99,20 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Logging in");
         progressDialog.show();
 
-//        firebaseAuth.signInWithEmailAndPassword(email, password)
-//                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-//                    @Override
-//                    public void onSuccess(AuthResult authResult) {
-//                        makeMeOnline();
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        progressDialog.dismiss();
-//                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        makeMeOnline();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
@@ -114,23 +123,23 @@ public class LoginActivity extends AppCompatActivity {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("online", "true");
 
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-//        databaseReference.child(firebaseAuth.getUid()).updateChildren(hashMap)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void unused) {
-//                        progressDialog.dismiss();
-//                        Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
-//                        //                        checkUserType();
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        progressDialog.dismiss();
-//                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        databaseReference.child(firebaseAuth.getUid()).updateChildren(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
+                        //                        checkUserType();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 //    private void checkUserType() {
@@ -177,11 +186,23 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isConnectedToInternet(LoginActivity loginActivity) {
         ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
+//        NetworkInfo wifiConnection = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//        NetworkInfo mobileConnection = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+//
+//
+//        if ((wifiConnection != null && wifiConnection.isConnected()) || (mobileConnection != null && mobileConnection.isConnected())){
+//            return true;
+//        }
+//        else{
+//            return false;
+//        }
+
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         boolean result = false;
-        if (networkInfo != null) {
+        if (networkInfo != null){
             result = networkInfo.isConnected();
-        } else {
+        }
+        else{
             result = false;
         }
 //
@@ -207,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(getApplicationContext(), com.example.bookly.SplashScreenActivity.class));
+                        startActivity(new Intent(getApplicationContext(), SplashScreenActivity.class));
                         finish();
                     }
                 });
