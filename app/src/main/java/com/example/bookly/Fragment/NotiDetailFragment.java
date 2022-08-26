@@ -3,20 +3,27 @@ package com.example.bookly.Fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.bookly.Adapter.NotificationAdapter;
+import com.example.bookly.Model.NotificationModel;
 import com.example.bookly.R;
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
 
 
 public class NotiDetailFragment extends Fragment {
 
-    ViewPager viewPager;
-    TabLayout tabLayout;
+    RecyclerView notificationRv;
+    ArrayList<NotificationModel> notificationList;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,6 +60,27 @@ public class NotiDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_noti_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_noti_detail, container, false);
+
+        notificationRv = view.findViewById(R.id.notificationRv);
+
+        notificationList = new ArrayList<>();
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+        notificationList.add(new NotificationModel(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
+
+        NotificationAdapter notificationAdapter = new NotificationAdapter(notificationList, getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        notificationRv.setLayoutManager(layoutManager);
+        notificationRv.setAdapter(notificationAdapter);
+
+        return view;
     }
 }

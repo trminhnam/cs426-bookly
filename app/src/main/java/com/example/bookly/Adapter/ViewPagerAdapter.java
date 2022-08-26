@@ -32,5 +32,18 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         return 2;
     }
 
+    @NonNull
+    @Override
+    public CharSequence getPageTitle(int position){
+        String title = null;
+
+        if (position == 0){
+            title = "Detail";
+        } else if (position == 1){
+            title = "Request";
+        }
+
+        return title;
+    }
 
 }
