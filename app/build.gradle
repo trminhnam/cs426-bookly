@@ -52,6 +52,7 @@ dependencies {
     implementation 'com.github.iammert:ReadableBottomBar:0.2'
     implementation 'com.github.3llomi:CircularStatusView:V1.0.2'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 
     implementation 'com.github.florent37:diagonallayout:1.0.7'
 }
