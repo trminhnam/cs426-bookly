@@ -19,10 +19,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -30,13 +33,14 @@ import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText addressEt, emailEt, passwordEt, confirmPasswordEt;
+    private EditText nameEt, addressEt, emailEt, passwordEt, confirmPasswordEt;
     private Button registerButton;
 
     private TextView loginTv;
 
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
+    FirebaseDatabase firebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,28 +49,21 @@ public class RegisterActivity extends AppCompatActivity {
 
         //Firebase
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance(
+                "https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app"
+        );
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait");
         progressDialog.setCanceledOnTouchOutside(false);
 
-
+        nameEt = findViewById(R.id.nameEt);
         addressEt = findViewById(R.id.addressEt);
         emailEt = findViewById(R.id.emailEt);
         passwordEt = findViewById(R.id.passwordEt);
         confirmPasswordEt = findViewById(R.id.confirmPasswordEt);
         registerButton = findViewById(R.id.registerBtn);
         loginTv = findViewById(R.id.loginTv);
-
-
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                inputData();
-                Toast.makeText(RegisterActivity.this, "Register account", Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
         loginTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,10 +73,19 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputData();
+//                Toast.makeText(RegisterActivity.this, "Register account", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private String address, email, password, confirmPassword;
+    private String name, address, email, password, confirmPassword;
     private void inputData() {
+        name = nameEt.getText().toString().trim();
         address = addressEt.getText().toString().trim();
         email = emailEt.getText().toString().trim();
         password = passwordEt.getText().toString().trim();
@@ -123,12 +129,58 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.show();
 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onSuccess(AuthResult authResult) {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("FIREBASE_AUTH", "createUserWithEmail:success");
+//                            FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                            pushUserAccountData(task);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.d("FIREBASE_AUTH", "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(RegisterActivity.this,
+                                    "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
+                    }
+                });
+
+//        firebaseAuth.createUserWithEmailAndPassword(email, password)
+//                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+//                    @Override
+//                    public void onSuccess(AuthResult authResult) {
+//                        progressDialog.dismiss();
+//                        saverFirebaseData();
+//                        Toast.makeText(RegisterActivity.this, "Create account successfully.", Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        progressDialog.dismiss();
+//                        Toast.makeText(RegisterActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+    }
+
+    private void pushUserAccountData(@NonNull Task<AuthResult> task) {
+        User user = new User(name, email, password, address);
+        String id = task.getResult().getUser().getUid();
+        firebaseDatabase.getReference()
+                .child("Users")
+                .child(id)
+                .setValue(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
                         progressDialog.dismiss();
-                        saverFirebaseData();
-                        Toast.makeText(RegisterActivity.this, "Create account successfully.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "Register success", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
