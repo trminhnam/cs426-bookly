@@ -2,4 +2,5 @@
 <resources>
     <dimen name="story_image_width">120dp</dimen>
     <dimen name="story_image_height">80dp</dimen>
+    <dimen name="navigation_height">60dp</dimen>
 </resources>
