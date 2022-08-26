@@ -8,24 +8,49 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.bookly.Fragment.NotiDetailFragment;
 import com.example.bookly.Fragment.RequestFragment;
 
+import java.util.ArrayList;
+
 public class ViewPagerAdapter extends FragmentPagerAdapter {
+    private ArrayList<Fragment> _fragments;
+
     public ViewPagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
+        this._fragments = new ArrayList<Fragment>();
     }
 
     public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
     }
 
+    public static NotiDetailFragment notiDetailFragment = null;
+    public static RequestFragment requestFragment = null;
+
     @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (position){
-            case 0: return new NotiDetailFragment();
-            case 1: return new RequestFragment();
-            default: return new NotiDetailFragment();
+            case 0:
+                if (notiDetailFragment == null) {
+                    notiDetailFragment = new NotiDetailFragment();
+                }
+                return notiDetailFragment;
+            case 1:
+                if (requestFragment == null) {
+                    requestFragment = new RequestFragment();
+                }
+                return requestFragment;
+            default:
+                if (notiDetailFragment == null) {
+                    notiDetailFragment = new NotiDetailFragment();
+                }
+                return notiDetailFragment;
         }
     }
+
+    public void add(Fragment fragment) {
+        this._fragments.add(fragment);
+    }
+
 
     @Override
     public int getCount() {
