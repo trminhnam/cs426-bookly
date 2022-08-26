@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextView registerTextView;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private FirebaseUser currentUser;
+
     private ProgressDialog progressDialog;
 
     @Override
@@ -46,12 +50,19 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_modern);
 
+        // firebase
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance(
+                "https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app"
+        );
+        currentUser = firebaseAuth.getCurrentUser();
+
+        // progress dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait.");
         progressDialog.setCanceledOnTouchOutside(false);
 
-
+        // views
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
@@ -61,13 +72,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-                Toast.makeText(LoginActivity.this, "Move to register an account", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
-        //Test the login to user main activity
-        //admin have form: abc@admin.com
-        //user have form: abc@user.com
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,7 +111,11 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        makeMeOnline();
+//                        makeMeOnline();
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -186,17 +198,6 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isConnectedToInternet(LoginActivity loginActivity) {
         ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-//        NetworkInfo wifiConnection = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//        NetworkInfo mobileConnection = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-//
-//
-//        if ((wifiConnection != null && wifiConnection.isConnected()) || (mobileConnection != null && mobileConnection.isConnected())){
-//            return true;
-//        }
-//        else{
-//            return false;
-//        }
-
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         boolean result = false;
         if (networkInfo != null){
@@ -237,4 +238,13 @@ public class LoginActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if (currentUser != null){
+//            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+//            finish();
+//        }
+//    }
 }
