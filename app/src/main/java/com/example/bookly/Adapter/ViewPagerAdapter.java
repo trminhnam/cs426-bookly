@@ -22,13 +22,28 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         super(fm, behavior);
     }
 
+    public static NotiDetailFragment notiDetailFragment = null;
+    public static RequestFragment requestFragment = null;
+
     @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (position){
-            case 0: return new NotiDetailFragment();
-            case 1: return new RequestFragment();
-            default: return new NotiDetailFragment();
+            case 0:
+                if (notiDetailFragment == null) {
+                    notiDetailFragment = new NotiDetailFragment();
+                }
+                return notiDetailFragment;
+            case 1:
+                if (requestFragment == null) {
+                    requestFragment = new RequestFragment();
+                }
+                return requestFragment;
+            default:
+                if (notiDetailFragment == null) {
+                    notiDetailFragment = new NotiDetailFragment();
+                }
+                return notiDetailFragment;
         }
     }
 

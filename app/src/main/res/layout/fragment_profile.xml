@@ -1,14 +1,326 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:diagonal="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".Fragment.ProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Profile Fragment" />
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:id="@+id/llProfileFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                diagonal:layout_constraintEnd_toEndOf="parent"
+                diagonal:layout_constraintHorizontal_bias="0.5"
+                diagonal:layout_constraintStart_toStartOf="parent"
+                diagonal:layout_constraintTop_toTopOf="parent">
+
+                <com.github.florent37.diagonallayout.DiagonalLayout
+                    android:id="@+id/dlProfileFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_230mdp"
+                    android:elevation="0dp"
+                    diagonal:diagonal_angle="10"
+                    diagonal:diagonal_direction="left"
+                    diagonal:diagonal_position="bottom">
+
+                    <ImageView
+                        android:id="@+id/dlivProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="center"
+                        android:src="@drawable/dog_cute" />
+
+                    <View
+                        android:id="@+id/dlvProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#22807373" />
+
+                </com.github.florent37.diagonallayout.DiagonalLayout>
+            </LinearLayout>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/_90mdp"
+                android:layout_height="@dimen/_90mdp"
+                android:padding="4dp"
+                android:src="@drawable/cartoon_penguin_dressed"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/llProfileFragment"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/llProfileFragment"
+                app:layout_constraintTop_toTopOf="@+id/llProfileFragment"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <ImageView
+                android:id="@+id/ivTickProfileFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/checkbox_on_background"
+                app:layout_constraintBottom_toBottomOf="@+id/llProfileFragment"
+                app:layout_constraintEnd_toEndOf="@+id/profile_image"
+                app:layout_constraintHorizontal_bias="0.8"
+                app:layout_constraintStart_toStartOf="@+id/profile_image"
+                app:layout_constraintTop_toTopOf="@+id/profile_image"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/tvNameProfileFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="The Penguins"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14mdp"
+                app:layout_constraintEnd_toEndOf="@+id/profile_image"
+                app:layout_constraintStart_toStartOf="@+id/profile_image"
+                app:layout_constraintTop_toBottomOf="@+id/llProfileFragment" />
+
+            <TextView
+                android:id="@+id/tvMajorProfileFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Android Deverloper"
+                android:textSize="@dimen/_10mdp"
+                app:layout_constraintEnd_toEndOf="@+id/profile_image"
+                app:layout_constraintStart_toStartOf="@+id/profile_image"
+                app:layout_constraintTop_toBottomOf="@+id/tvNameProfileFragment" />
+
+            <View
+                android:id="@+id/vAddFriendProfileFragment"
+                android:layout_width="@dimen/_30mdp"
+                android:layout_height="@dimen/_30mdp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/ic_baseline_circle_24"
+                android:backgroundTint="@color/blue"
+                app:layout_constraintEnd_toStartOf="@+id/vMessProfileFragment"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvMajorProfileFragment" />
+
+            <View
+                android:id="@+id/vMessProfileFragment"
+                android:layout_width="@dimen/_30mdp"
+                android:layout_height="@dimen/_30mdp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/ic_baseline_circle_24"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintEnd_toStartOf="@+id/vPhoneProfileFragment"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/vAddFriendProfileFragment"
+                app:layout_constraintTop_toBottomOf="@+id/tvMajorProfileFragment" />
+
+            <View
+                android:id="@+id/vPhoneProfileFragment"
+                android:layout_width="@dimen/_30mdp"
+                android:layout_height="@dimen/_30mdp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/ic_baseline_circle_24"
+                android:backgroundTint="@color/green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/vMessProfileFragment"
+                app:layout_constraintTop_toBottomOf="@+id/tvMajorProfileFragment" />
+
+            <View
+                android:id="@+id/vIconAddFriendProfileFragment"
+                android:layout_width="@dimen/_17mdp"
+                android:layout_height="@dimen/_17mdp"
+                android:background="@drawable/ic_baseline_person_add_alt_1_24"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/vAddFriendProfileFragment"
+                app:layout_constraintEnd_toEndOf="@+id/vAddFriendProfileFragment"
+                app:layout_constraintStart_toStartOf="@+id/vAddFriendProfileFragment"
+                app:layout_constraintTop_toTopOf="@+id/vAddFriendProfileFragment" />
+
+            <View
+                android:id="@+id/vIconMessProfileFragment"
+                android:layout_width="@dimen/_17mdp"
+                android:layout_height="@dimen/_17mdp"
+                android:background="@drawable/ic_baseline_comment_24"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/vMessProfileFragment"
+                app:layout_constraintEnd_toEndOf="@+id/vMessProfileFragment"
+                app:layout_constraintStart_toStartOf="@+id/vMessProfileFragment"
+                app:layout_constraintTop_toTopOf="@+id/vMessProfileFragment" />
+
+            <View
+                android:id="@+id/vIconPhoneProfileFragment"
+                android:layout_width="@dimen/_17mdp"
+                android:layout_height="@dimen/_17mdp"
+                android:background="@drawable/ic_baseline_phone_24"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/vAddFriendProfileFragment"
+                app:layout_constraintEnd_toEndOf="@+id/vPhoneProfileFragment"
+                app:layout_constraintStart_toStartOf="@+id/vPhoneProfileFragment"
+                app:layout_constraintTop_toTopOf="@+id/vPhoneProfileFragment" />
+
+            <TextView
+                android:id="@+id/tvDescriptionProfileFragment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:text="Using 16bit native Automatic Mixed Precision (AMP) GPU available: True (cuda), used: True TPU available: False, using: 0 TPU cores IPU available: False, using: 0 IPUs HPU available: False, using: 0"
+                android:textSize="@dimen/_14font_mdp"
+                app:layout_constraintEnd_toEndOf="@+id/cardView"
+                app:layout_constraintStart_toStartOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+            <TextView
+                android:id="@+id/tvFriends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="16dp"
+                android:text="My Friends"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/tvDescriptionProfileFragment"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescriptionProfileFragment" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/htmlGrey"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="5dp"
+                app:cardMaxElevation="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vMessProfileFragment">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:id="@+id/tvFollowersProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Followers"
+                        app:layout_constraintEnd_toStartOf="@+id/vVerticalBar1"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tvNumFollowersProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4685"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_18mdp"
+                        app:layout_constraintEnd_toEndOf="@+id/tvFollowersProfileFragment"
+                        app:layout_constraintStart_toStartOf="@+id/tvFollowersProfileFragment"
+                        app:layout_constraintTop_toBottomOf="@+id/tvFollowersProfileFragment" />
+
+                    <View
+                        android:id="@+id/vVerticalBar1"
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:background="@color/black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvFriendsProfileFragment"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/tvFollowersProfileFragment"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvFriendsProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Friends"
+                        app:layout_constraintEnd_toStartOf="@+id/vVerticalBar2"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/vVerticalBar1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvNumFriendsProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4685"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_18mdp"
+                        app:layout_constraintEnd_toEndOf="@+id/tvFriendsProfileFragment"
+                        app:layout_constraintStart_toStartOf="@+id/tvFriendsProfileFragment"
+                        app:layout_constraintTop_toBottomOf="@+id/tvFriendsProfileFragment" />
+
+                    <View
+                        android:id="@+id/vVerticalBar2"
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:background="@color/black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvPhotosProfileFragment"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/tvFriendsProfileFragment"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvPhotosProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Photos"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/vVerticalBar2"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tvNumPhotosProfileFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4685"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_18mdp"
+                        app:layout_constraintEnd_toEndOf="@+id/tvPhotosProfileFragment"
+                        app:layout_constraintStart_toStartOf="@+id/tvPhotosProfileFragment"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPhotosProfileFragment" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_friend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvFriends" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
