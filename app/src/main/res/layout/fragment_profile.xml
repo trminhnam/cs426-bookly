@@ -67,6 +67,17 @@
                 app:layout_constraintVertical_bias="1.0" />
 
             <ImageView
+                android:id="@+id/ivchangeCoverPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/white"
+                android:src="@drawable/ic_baseline_image_24"
+                app:layout_constraintBottom_toBottomOf="@+id/llProfileFragment"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
                 android:id="@+id/ivTickProfileFragment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
