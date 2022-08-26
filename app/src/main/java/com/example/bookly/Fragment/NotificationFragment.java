@@ -20,6 +20,7 @@ public class NotificationFragment extends Fragment {
 
     ViewPager viewPager;
     TabLayout tabLayout;
+    ViewPagerAdapter _adapter;
 
 
 
@@ -40,7 +41,12 @@ public class NotificationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
 
         viewPager = view.findViewById(R.id.viewPager);
-        viewPager.setAdapter(new ViewPagerAdapter(getFragmentManager()));
+        this._adapter = new ViewPagerAdapter(getChildFragmentManager());
+        this._adapter.add(new NotiDetailFragment());
+
+
+        viewPager.setAdapter(this._adapter);
+
 
         tabLayout = view.findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
