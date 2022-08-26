@@ -72,9 +72,9 @@
                 android:orientation="horizontal"
                 >
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal"
                     android:paddingHorizontal="8dp"
@@ -82,8 +82,12 @@
                     app:layout_constraintTop_toBottomOf="@+id/view2">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:id="@+id/add_new_story_constraint_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        >
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/story_image"
@@ -112,10 +116,14 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/storyRecycleView"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp" />
-                </LinearLayout>
+                        android:layout_marginStart="8dp"
+                        app:layout_constraintStart_toEndOf="@id/add_new_story_constraint_layout"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
 
 
