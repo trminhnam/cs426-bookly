@@ -8,9 +8,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.bookly.Fragment.NotiDetailFragment;
 import com.example.bookly.Fragment.RequestFragment;
 
+import java.util.ArrayList;
+
 public class ViewPagerAdapter extends FragmentPagerAdapter {
+    private ArrayList<Fragment> _fragments;
+
     public ViewPagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
+        this._fragments = new ArrayList<Fragment>();
     }
 
     public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
@@ -26,6 +31,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             default: return new NotiDetailFragment();
         }
     }
+
+    public void add(Fragment fragment) {
+        this._fragments.add(fragment);
+    }
+
 
     @Override
     public int getCount() {
