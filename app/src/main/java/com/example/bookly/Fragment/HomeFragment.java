@@ -62,110 +62,39 @@ public class HomeFragment extends Fragment {
         dashboardRv.setNestedScrollingEnabled(true);
         dashboardRv.setAdapter(dashboardAdapter);
 
-
         return view;
     }
 
     private void addTestDashboardData() {
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 1",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 2",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 3",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 4",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 5",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
+            for(int i=1; i<=40; i++){
+                dashboardList.add(new DashboardModel(
+                    R.drawable.ic_baseline_person_24,
+                    R.drawable.resource_default,
+                    R.drawable.ic_baseline_bookmark_border_24,
+                    "User " + i,
+                    "Developer",
+                    "123",
+                    "456",
+                    "789"
+            ));
+        }
     }
 
     private void addTestStoryData() {
+        // add story
         storyList.add(new StoryModel(
                 R.drawable.resource_default,
                 R.drawable.bg_gradient,
                 R.drawable.ic_baseline_person_24,
                 "Add Story"));
-        for(int i=1; i < 10; i++){
+        for(int i=1; i <=40; i++){
+            // story data
             storyList.add(new StoryModel(
                 R.drawable.resource_default,
                 R.drawable.bg_gradient,
                 R.drawable.ic_baseline_person_24,
                 "User Name " + i));
         }
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 1"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 2"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 3"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 4"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 5"));
     }
 }
 
