@@ -17,11 +17,6 @@ import com.example.bookly.R;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
 
     RecyclerView storyRv, dashboardRv;
@@ -134,31 +129,43 @@ public class HomeFragment extends Fragment {
                 R.drawable.resource_default,
                 R.drawable.bg_gradient,
                 R.drawable.ic_baseline_person_24,
-                "User Name 1"));
-
-        storyList.add(new StoryModel(
+                "Add Story"));
+        for(int i=1; i < 10; i++){
+            storyList.add(new StoryModel(
                 R.drawable.resource_default,
                 R.drawable.bg_gradient,
                 R.drawable.ic_baseline_person_24,
-                "User Name 2"));
-
-        storyList.add(new StoryModel(
-                R.drawable.resource_default,
-                R.drawable.bg_gradient,
-                R.drawable.ic_baseline_person_24,
-                "User Name 3"));
-
-        storyList.add(new StoryModel(
-                R.drawable.resource_default,
-                R.drawable.bg_gradient,
-                R.drawable.ic_baseline_person_24,
-                "User Name 4"));
-
-        storyList.add(new StoryModel(
-                R.drawable.resource_default,
-                R.drawable.bg_gradient,
-                R.drawable.ic_baseline_person_24,
-                "User Name 5"));
+                "User Name " + i));
+        }
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 1"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 2"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 3"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 4"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 5"));
     }
 }
 

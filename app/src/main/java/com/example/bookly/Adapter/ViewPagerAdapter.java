@@ -29,11 +29,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position){
-            case 0:
-                if (notiDetailFragment == null) {
-                    notiDetailFragment = new NotiDetailFragment();
-                }
-                return notiDetailFragment;
             case 1:
                 if (requestFragment == null) {
                     requestFragment = new RequestFragment();

@@ -61,71 +61,14 @@
                 app:layout_constraintStart_toStartOf="@+id/appTextView"
                 app:layout_constraintTop_toBottomOf="@id/profile_image" />
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/story_horizontal_scrollview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
-                android:scrollbars="none"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/storyRecycleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view2"
-                android:orientation="horizontal"
-                >
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/view2">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/add_new_story_constraint_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        >
-
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:id="@+id/story_image"
-                            android:layout_width="@dimen/story_image_width"
-                            android:layout_height="@dimen/story_image_height"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/resource_default"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:riv_border_color="#333333"
-                            app:riv_border_width="2dip"
-                            app:riv_corner_radius="15dip"
-                            app:riv_mutate_background="true"
-                            app:riv_tile_mode="repeat" />
-
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_baseline_add_circle_outline_24"
-                            app:layout_constraintBottom_toBottomOf="@+id/story_image"
-                            app:layout_constraintEnd_toEndOf="@+id/story_image"
-                            app:layout_constraintStart_toStartOf="@+id/story_image"
-                            app:layout_constraintTop_toTopOf="@+id/story_image" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/storyRecycleView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        app:layout_constraintStart_toEndOf="@id/add_new_story_constraint_layout"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.core.widget.NestedScrollView>
-
+                app:layout_constraintTop_toBottomOf="@+id/view2" />
 
             <View
                 android:id="@+id/view_bar_2"
@@ -135,7 +78,7 @@
                 android:background="#232222"
                 app:layout_constraintEnd_toEndOf="@id/profile_image"
                 app:layout_constraintStart_toStartOf="@+id/appTextView"
-                app:layout_constraintTop_toBottomOf="@id/story_horizontal_scrollview" />
+                app:layout_constraintTop_toBottomOf="@id/storyRecycleView" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/dashboardRv"
@@ -146,5 +89,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
