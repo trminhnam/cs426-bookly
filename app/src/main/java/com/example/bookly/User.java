@@ -4,6 +4,7 @@ public class User {
 
     private String name, email ,password, address;
     private String coverPhoto;
+    private String profileImage;
 
     public User() {
     }
@@ -53,5 +54,13 @@ public class User {
 
     public void setCoverPhoto(String coverPhoto) {
         this.coverPhoto = coverPhoto;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
