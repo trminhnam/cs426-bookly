@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
     // other view
     ImageView changeCoverPhotoIv, coverPhotoIv;
     TextView nameTv, majorTv;
-    ImageView verifyAccountIv;
+    ImageView verifyAccountIv, profileImageIv;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -76,6 +76,19 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        // view for profile image and verify account
+        profileImageIv = view.findViewById(R.id.profile_image);
+        verifyAccountIv = view.findViewById(R.id.ivVerifyAccountProfileFragment);
+        verifyAccountIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, 22);
+            }
+        });
 
         // view for cover photo and change cover photo
         coverPhotoIv = view.findViewById(R.id.dlivProfileFragment);
@@ -118,6 +131,10 @@ public class ProfileFragment extends Fragment {
                                     .load(user.getCoverPhoto())
                                     .placeholder(R.drawable.placeholder)
                                     .into(coverPhotoIv);
+                            Picasso.get()
+                                    .load(user.getProfileImage())
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(profileImageIv);
                             nameTv.setText(user.getName());
                             majorTv.setText(user.getAddress());
                         }
@@ -188,7 +205,39 @@ public class ProfileFragment extends Fragment {
             }
         }
         else if (requestCode == 22){
-            ;
+            if (data.getData() != null) {
+                Uri uri = data.getData();
+                profileImageIv.setImageURI(uri);
+                final StorageReference storageReference = storage.getReference().child("profileImage").child(auth.getUid());
+
+                storageReference.putFile(uri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        // Got the download URL for 'users/me/profile.png'
+                                        String downloadUrl = uri.toString();
+                                        database.getReference()
+                                                .child("Users")
+                                                .child(auth.getUid())
+                                                .child("profileImage")
+                                                .setValue(downloadUrl);
+                                        Toast.makeText(getContext(), "Upload Success", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(Exception exception) {
+                                // Handle unsuccessful uploads
+                                // ...
+                                Toast.makeText(getContext(), "Upload Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
         }
     }
 }
