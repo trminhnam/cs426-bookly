@@ -2,7 +2,9 @@ package com.example.bookly;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Profile");
-        toolbar.setTitleTextColor(Color.BLACK);
+        toolbar.setTitle("My profile");
         setSupportActionBar(toolbar);
+        toolbar.setVisibility(View.GONE);
         navigation = findViewById(R.id.navigation);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -50,22 +52,27 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
+                        toolbar.setVisibility(View.GONE);
                         transaction.replace(R.id.frame_layout_container, new HomeFragment());
                         transaction.commit();
                         return true;
                     case R.id.navigation_notification:
+                        toolbar.setVisibility(View.GONE);
                         transaction.replace(R.id.frame_layout_container, new NotificationFragment());
                         transaction.commit();
                         return true;
                     case R.id.navigation_addpost:
+                        toolbar.setVisibility(View.GONE);
                         transaction.replace(R.id.frame_layout_container, new AddPostFragment());
                         transaction.commit();
                         return true;
                     case R.id.navigation_search:
+                        toolbar.setVisibility(View.GONE);
                         transaction.replace(R.id.frame_layout_container, new SearchFragment());
                         transaction.commit();
                         return true;
                     case R.id.navigation_profile:
+                        toolbar.setVisibility(View.VISIBLE);
                         transaction.replace(R.id.frame_layout_container, new ProfileFragment());
                         transaction.commit();
                         return true;
@@ -73,5 +80,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        return true;
     }
 }
