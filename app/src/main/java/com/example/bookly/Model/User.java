@@ -1,10 +1,11 @@
-package com.example.bookly;
+package com.example.bookly.Model;
 
 public class User {
 
     private String name, email ,password, address;
     private String coverPhoto;
     private String profileImage;
+    private String userID;
 
     public User() {
     }
@@ -62,5 +63,13 @@ public class User {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }
