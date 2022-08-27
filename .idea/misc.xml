@@ -3,21 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/drawable-v24/bg_gradient.xml" value="0.213" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/activity_main.xml" value="0.259375" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/fragment_home.xml" value="0.25905797101449274" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/fragment_profile.xml" value="0.4" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/fragment_profile2.xml" value="0.25905797101449274" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_profile.xml" value="0.25833333333333336" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/toolbar_bg.xml" value="0.19375" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable-v24/bg_gradient.xml" value="0.163" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable-v24/ic_baseline_person_24.xml" value="0.1645" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_baseline_add_circle_outline_24.xml" value="0.1405" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/activity_login.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/activity_main.xml" value="0.325" />
-        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/activity_register_modern.xml" value="0.4" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/fragment_home.xml" value="0.264" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/fragment_notification.xml" value="0.4" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/fragment_profile.xml" value="0.1" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_dashboard.xml" value="0.536" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_request.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_story.xml" value="0.32395833333333335" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/menu/navigation.xml" value="0.325" />
       </map>
