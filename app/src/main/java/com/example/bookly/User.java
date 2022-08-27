@@ -3,6 +3,10 @@ package com.example.bookly;
 public class User {
 
     private String name, email ,password, address;
+    private String coverPhoto;
+
+    public User() {
+    }
 
     public User(String name, String email, String password, String address) {
         this.name = name;
@@ -41,5 +45,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCoverPhoto() {
+        return coverPhoto;
+    }
+
+    public void setCoverPhoto(String coverPhoto) {
+        this.coverPhoto = coverPhoto;
     }
 }
