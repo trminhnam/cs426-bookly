@@ -1,10 +1,12 @@
 package com.example.bookly;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -21,13 +23,17 @@ public class MainActivity extends AppCompatActivity {
     // save all the fragments in this array
     private static Fragment fragment;
     private static BottomNavigationView navigation;
+    Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Profile");
+        toolbar.setTitleTextColor(Color.BLACK);
+        setSupportActionBar(toolbar);
         navigation = findViewById(R.id.navigation);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
