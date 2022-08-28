@@ -27,7 +27,7 @@
                 android:id="@+id/story_image"
                 android:layout_width="@dimen/story_image_width"
                 android:layout_height="@dimen/story_image_height"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/resource_default"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
