@@ -13,10 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.devlomi.circularstatusview.CircularStatusView;
 import com.example.bookly.Model.StoryModel;
+import com.example.bookly.Model.User;
 import com.example.bookly.Model.UserStory;
 import com.example.bookly.R;
-import com.example.bookly.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -80,6 +81,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
             holder.profile.setImageResource(model.getProfile());
             holder.storyType.setImageResource(model.getStoryType());
             holder.name.setText(model.getName());
+            holder.status.setPortionsCount(model.getStories().size());
 
             UserStory latestStory = model.getStories().get(model.getStories().size() - 1);
             Picasso.get()
@@ -156,6 +158,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
         // for story data
         ImageView storyImg, profile, storyType;
         TextView name;
+        CircularStatusView status;
 
         // for add story
         RoundedImageView addStoryImage;
@@ -171,6 +174,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                 profile = itemView.findViewById(R.id.profile_image);
                 storyType = itemView.findViewById(R.id.story_type);
                 name = itemView.findViewById(R.id.name);
+                status = itemView.findViewById(R.id.circular_status_view);
             }
         }
     }

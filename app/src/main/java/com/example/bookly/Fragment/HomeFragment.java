@@ -158,6 +158,7 @@ public class HomeFragment extends Fragment {
                                 story.setStories(userStories);
                                 storyList.add(story);
                             }
+                            adapter.notifyDataSetChanged();
                         }
                     }
                     @Override
