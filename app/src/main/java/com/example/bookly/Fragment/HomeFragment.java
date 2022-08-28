@@ -14,9 +14,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookly.Adapter.DashboardAdapter;
+import com.example.bookly.Adapter.PostAdapter;
 import com.example.bookly.Adapter.StoryAdapter;
-import com.example.bookly.Model.DashboardModel;
+import com.example.bookly.Model.Post;
 import com.example.bookly.Model.StoryModel;
 import com.example.bookly.Model.UserStory;
 import com.example.bookly.R;
@@ -38,7 +38,9 @@ public class HomeFragment extends Fragment {
 
     RecyclerView storyRv, dashboardRv;
     ArrayList<StoryModel> storyList;
-    ArrayList<DashboardModel> dashboardList;
+    ArrayList<Post> postList;
+
+    // Firebase
     FirebaseAuth auth;
     FirebaseDatabase database;
     FirebaseStorage storage;
@@ -60,7 +62,16 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        // init Firebase
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
+        storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
+
+
         dialog = new ProgressDialog(getContext());
+
     }
 
     @Override
@@ -169,120 +180,38 @@ public class HomeFragment extends Fragment {
 
         // Add dashboard recycle view
         dashboardRv = view.findViewById(R.id.dashboardRv);
-        dashboardList = new ArrayList<>();
-        addTestDashboardData();
-        DashboardAdapter dashboardAdapter = new DashboardAdapter(dashboardList, getContext());
+        postList = new ArrayList<>();
+        PostAdapter postAdapter = new PostAdapter(postList, getContext());
 
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext());
         dashboardRv.setLayoutManager(linearLayoutManager1);
         dashboardRv.setNestedScrollingEnabled(true);
-        dashboardRv.setAdapter(dashboardAdapter);
+        dashboardRv.setAdapter(postAdapter);
+
+        database.getReference().child("Posts")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        postList.clear();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Post post = dataSnapshot.getValue(Post.class);
+                            postList.add(post);
+
+                        }
+                        postAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
 
         return view;
     }
 
-    private void addTestDashboardData() {
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 1",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
 
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 2",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 3",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 4",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-        dashboardList.add(new DashboardModel(
-                R.drawable.ic_baseline_person_24,
-                R.drawable.resource_default,
-                R.drawable.ic_baseline_bookmark_border_24,
-                "User 5",
-                "Developer",
-                "123",
-                "456",
-                "789"
-        ));
-
-    }
-
-    private void addTestStoryData() {
-        storyList.add(new StoryModel(
-                R.drawable.resource_default,
-                R.drawable.bg_gradient,
-                R.drawable.ic_baseline_person_24,
-                "Add Story"));
-        for(int i=1; i < 10; i++){
-            storyList.add(new StoryModel(
-                R.drawable.resource_default,
-                R.drawable.bg_gradient,
-                R.drawable.ic_baseline_person_24,
-                "User Name " + i));
-        }
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 1"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 2"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 3"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 4"));
-//
-//        storyList.add(new StoryModel(
-//                R.drawable.resource_default,
-//                R.drawable.bg_gradient,
-//                R.drawable.ic_baseline_person_24,
-//                "User Name 5"));
-    }
 }
 
 

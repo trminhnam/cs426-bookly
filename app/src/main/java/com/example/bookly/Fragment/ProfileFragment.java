@@ -17,8 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bookly.R;
-import com.example.bookly.Adapter.FriendAdapter;
-import com.example.bookly.Model.FriendModel;
+import com.example.bookly.Adapter.FollowersAdapter;
+import com.example.bookly.Model.FollowModel;
 import com.example.bookly.Model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,13 +42,16 @@ public class ProfileFragment extends Fragment {
     FirebaseStorage storage;
 
     // recycler view
-    RecyclerView recyclerView;
-    ArrayList<FriendModel> list;
+    RecyclerView followerRv;
+    ArrayList<FollowModel> followerList;
 
     // other view
     ImageView changeCoverPhotoIv, coverPhotoIv;
     TextView nameTv, majorTv;
     ImageView verifyAccountIv, profileImageIv;
+
+    // user statistics
+    TextView numFollowersTv;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -102,9 +105,10 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // view for name and major
+        // view for name, major, user statistics
         nameTv = view.findViewById(R.id.tvNameProfileFragment);
         majorTv = view.findViewById(R.id.tvMajorProfileFragment);
+        numFollowersTv = view.findViewById(R.id.tvNumFollowersProfileFragment);
 
         // verify account
         verifyAccountIv = view.findViewById(R.id.ivVerifyAccountProfileFragment);
@@ -119,23 +123,32 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // get user information from firebase and firebase storage
+
+        // get profile information from firebase and firebase storage
         database.getReference().child("Users").child(auth.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()){
                             User  user = snapshot.getValue(User.class);
+
+                            // Get cover photo
                             Picasso.get()
                                     .load(user.getCoverPhoto())
                                     .placeholder(R.drawable.placeholder)
                                     .into(coverPhotoIv);
+
+                            // get profile image
                             Picasso.get()
                                     .load(user.getProfileImage())
                                     .placeholder(R.drawable.placeholder)
                                     .into(profileImageIv);
+
+                            // get list of follower profile images
+                            numFollowersTv.setText(String.valueOf(user.getFollowerCount()));
                             nameTv.setText(user.getName());
                             majorTv.setText(user.getAddress());
+
                         }
                     }
 
@@ -146,21 +159,35 @@ public class ProfileFragment extends Fragment {
                 });
 
         // recycler view for friend list
-        recyclerView = view.findViewById(R.id.rv_friend);
+        followerRv = view.findViewById(R.id.rv_friend);
 
-        list = new ArrayList<>();
-        list.add(new FriendModel(R.drawable.cartoon_penguin_dressed));
-        list.add(new FriendModel(R.drawable.cartoon_penguin_dressed));
-        list.add(new FriendModel(R.drawable.cartoon_penguin_dressed));
-        list.add(new FriendModel(R.drawable.cartoon_penguin_dressed));
-        list.add(new FriendModel(R.drawable.cartoon_penguin_dressed));
-        list.add(new FriendModel(R.drawable.cartoon_penguin_dressed));
-        list.add(new FriendModel(R.drawable.cartoon_penguin_dressed));
+        followerList = new ArrayList<>();
 
-        FriendAdapter adapter = new FriendAdapter(list, getContext());
+        FollowersAdapter adapter = new FollowersAdapter(followerList, getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(adapter);
+        followerRv.setLayoutManager(linearLayoutManager);
+        followerRv.setAdapter(adapter);
+
+        // get list of followers
+        database.getReference()
+                .child("Users")
+                .child(auth.getUid())
+                .child("Followers")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                            FollowModel followModel = dataSnapshot.getValue(FollowModel.class);
+                            followerList.add(followModel);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
         return view;
     }
