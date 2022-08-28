@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userImageIv"
+        android:layout_width="@dimen/_60mdp"
+        android:layout_height="@dimen/_60mdp"
+        android:src="@drawable/ic_baseline_person_24"
+        app:civ_border_color="@color/blue_light"
+        app:civ_border_width="2dp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/userImageIv"
+        app:layout_constraintTop_toTopOf="@id/userImageIv"
+        app:layout_constraintBottom_toBottomOf="@id/userImageIv"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/userNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Name"
+            android:textStyle="bold"
+            android:textSize="24dp"
+            android:textColor="@color/black"/>
+
+
+        <TextView
+            android:id="@+id/userAboutTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="About"/>
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/followBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/userImageIv"
+        app:layout_constraintBottom_toBottomOf="@id/userImageIv"
+        android:text="Follow"
+        android:background="@drawable/follow_btn_background"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

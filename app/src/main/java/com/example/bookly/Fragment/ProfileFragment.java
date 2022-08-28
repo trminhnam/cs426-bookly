@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +19,7 @@ import android.widget.Toast;
 import com.example.bookly.R;
 import com.example.bookly.Adapter.FriendAdapter;
 import com.example.bookly.Model.FriendModel;
-import com.example.bookly.User;
+import com.example.bookly.Model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
