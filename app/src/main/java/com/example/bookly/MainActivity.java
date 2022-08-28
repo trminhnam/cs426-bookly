@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_addpost:
                         toolbar.setVisibility(View.GONE);
                         transaction.replace(R.id.frame_layout_container, new AddPostFragment());
+//                        navigation.setVisibility(View.GONE);
                         transaction.commit();
                         return true;
                     case R.id.navigation_search:
