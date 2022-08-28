@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="8dp"
     tools:context=".Fragment.AddPostFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -26,9 +27,9 @@
         android:layout_width="75dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:enabled="false"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/post_active_btn"
+        android:enabled="false"
         android:text="Post"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -63,8 +64,10 @@
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/profile_image"
         app:layout_constraintEnd_toEndOf="@+id/profile_image"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/titlePostTv"
-        app:layout_constraintTop_toTopOf="@+id/profile_image" />
+        app:layout_constraintTop_toTopOf="@+id/profile_image"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/nameTv"
@@ -77,10 +80,10 @@
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/profile_image"
         app:layout_constraintTop_toTopOf="@+id/profile_image"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/timeTv"
+        android:id="@+id/aboutTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="10 seconds ago"
@@ -93,30 +96,28 @@
         android:id="@+id/postContentEt"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="4dp"
         android:background="@color/transparent"
         android:ems="10"
-        android:gravity="top"
-        android:hint="Your's book review"
+        android:gravity="top|left"
+        android:hint="Comment something about your favourite book."
         android:inputType="textMultiLine"
         android:minHeight="48dp"
+        android:minLines="4"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/postImageIv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/profile_image"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
     <ImageView
         android:id="@+id/postImageIv"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:scaleType="centerCrop"
         android:src="@drawable/dog_cute"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
