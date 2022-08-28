@@ -137,6 +137,35 @@ public class HomeFragment extends Fragment {
         storyRv.setNestedScrollingEnabled(true);
         storyRv.setAdapter(adapter);
 
+        database.getReference()
+                .child("stories").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            for (int i = 1; i < storyList.size(); i++) storyList.remove(1); // keep only first item
+                            for (DataSnapshot storySnapshot :snapshot.getChildren())
+                            {
+                                StoryModel story = new StoryModel();
+                                story.setStoryBy(storySnapshot.getKey());
+                                story.setStoryAt(storySnapshot.child("postedBy").getValue(Long.class));
+
+                                ArrayList<UserStory> userStories = new ArrayList<>();
+                                for (DataSnapshot userStorySnapshot : storySnapshot.child("userStories").getChildren())
+                                {
+                                    UserStory userStory = userStorySnapshot.getValue(UserStory.class);
+                                    userStories.add(userStory);
+                                }
+                                story.setStories(userStories);
+                                storyList.add(story);
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
         // Add dashboard recycle view
         dashboardRv = view.findViewById(R.id.dashboardRv);
         dashboardList = new ArrayList<>();
