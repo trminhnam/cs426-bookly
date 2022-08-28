@@ -4,17 +4,29 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bookly.Model.FollowModel;
 import com.example.bookly.Model.User;
 import com.example.bookly.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
 
@@ -25,6 +37,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
     public UserAdapter(Context context, ArrayList<User> userList) {
         this.context = context;
         this.userList = userList;
+
     }
 
 
@@ -45,6 +58,82 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
                 .into(holder.userImageIv);
         holder.userNameTv.setText(user.getName());
         holder.userAboutTv.setText(user.getAddress());
+
+        //
+        FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app")
+                .getReference()
+                .child("Users")
+                .child(user.getUserID())
+                .child("Followers")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // already following, disable button
+                            holder.followBtn.setBackground(ContextCompat.getDrawable(context, R.drawable.follow_active_btn));
+                            holder.followBtn.setText("Followed");
+                            holder.followBtn.setTextColor(ContextCompat.getColor(context, R.color.gray));
+                            holder.followBtn.setEnabled(false);
+                        }
+                        else{
+                            // Follow button for each other user
+                            holder.followBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    FollowModel followModel = new FollowModel();
+                                    followModel.setFollowedBy(FirebaseAuth.getInstance().getUid());
+                                    followModel.setFollowedAt(new Date().getTime());
+
+                                    // add current user to the followed user's followers list
+                                    FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                            .getReference()
+                                            .child("Users")
+                                            .child(user.getUserID())
+                                            .child("Followers")
+                                            .child(FirebaseAuth.getInstance().getUid())
+                                            .setValue(followModel)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    // increase number of followers for the followed user
+                                                    FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                                            .getReference()
+                                                            .child("Users")
+                                                            .child(user.getUserID())
+                                                            .child("followerCount")
+                                                            .setValue(user.getFollowerCount() + 1) // increase follower count
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    holder.followBtn.setBackground(ContextCompat.getDrawable(context, R.drawable.follow_active_btn));
+                                                                    holder.followBtn.setText("Followed");
+                                                                    holder.followBtn.setTextColor(ContextCompat.getColor(context, R.color.gray));
+                                                                    holder.followBtn.setEnabled(false);
+                                                                    Toast.makeText(context, "Followed " + user.getName(), Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                    Toast.makeText(context, "Followed", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
     }
 
     @Override
@@ -56,6 +145,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
 
         ImageView userImageIv;
         TextView userNameTv, userAboutTv;
+        Button followBtn;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +153,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
             userImageIv = itemView.findViewById(R.id.userImageIv);
             userNameTv = itemView.findViewById(R.id.userNameTv);
             userAboutTv = itemView.findViewById(R.id.userAboutTv);
+            followBtn = itemView.findViewById(R.id.followBtn);
         }
     }
 }
