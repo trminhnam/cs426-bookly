@@ -137,39 +137,6 @@ public class HomeFragment extends Fragment {
         storyRv.setNestedScrollingEnabled(true);
         storyRv.setAdapter(adapter);
 
-        database.getReference()
-                .child("stories")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists())
-                        {
-                            for (int i = 1; i < storyList.size(); i++) {
-                                storyList.remove(1);
-                            }
-                            for (DataSnapshot storySnapshot : snapshot.getChildren()){
-                                StoryModel story = new StoryModel();
-                                story.setStoryBy(storySnapshot.getKey());
-                                story.setStoryAt(storySnapshot.child("postedBy").getValue(Long.class));
-
-                                ArrayList<UserStory> stories = new ArrayList<>();
-                                for (DataSnapshot userStorySnapshot : storySnapshot.child("userStories").getChildren()){
-                                    UserStory userStory = userStorySnapshot.getValue(UserStory.class);
-                                    stories.add(userStory);
-                                }
-                                story.setStories(stories);
-                                storyList.add(story);
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
         // Add dashboard recycle view
         dashboardRv = view.findViewById(R.id.dashboardRv);
         dashboardList = new ArrayList<>();
@@ -241,6 +208,50 @@ public class HomeFragment extends Fragment {
                 "789"
         ));
 
+    }
+
+    private void addTestStoryData() {
+        storyList.add(new StoryModel(
+                R.drawable.resource_default,
+                R.drawable.bg_gradient,
+                R.drawable.ic_baseline_person_24,
+                "Add Story"));
+        for(int i=1; i < 10; i++){
+            storyList.add(new StoryModel(
+                R.drawable.resource_default,
+                R.drawable.bg_gradient,
+                R.drawable.ic_baseline_person_24,
+                "User Name " + i));
+        }
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 1"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 2"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 3"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 4"));
+//
+//        storyList.add(new StoryModel(
+//                R.drawable.resource_default,
+//                R.drawable.bg_gradient,
+//                R.drawable.ic_baseline_person_24,
+//                "User Name 5"));
     }
 }
 
