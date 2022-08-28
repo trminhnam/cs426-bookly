@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -33,11 +34,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
     Context context;
     ArrayList<User> userList;
 
+    // Firebase
+    FirebaseAuth auth;
+    FirebaseDatabase database;
+    FirebaseStorage storage;
+
 
     public UserAdapter(Context context, ArrayList<User> userList) {
         this.context = context;
         this.userList = userList;
 
+        // Firebase
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
+        storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
     }
 
 
@@ -59,7 +69,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
         holder.userNameTv.setText(user.getName());
         holder.userAboutTv.setText(user.getAddress());
 
-        //
+        // Check if the user is already followed
         FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference()
                 .child("Users")

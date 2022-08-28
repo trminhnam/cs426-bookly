@@ -29,8 +29,6 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
     public FollowersAdapter(ArrayList<FollowModel> list, Context context) {
         this.list = list;
         this.context = context;
-
-
     }
 
     @NonNull
@@ -48,6 +46,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
         FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference()
                 .child("Users")
+//                .child()
                 .child(model.getFollowedBy())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -56,7 +55,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
                         Picasso.get()
                                 .load(user.getProfileImage())
                                 .placeholder(R.drawable.placeholder)
-                                .into(holder.profileIv );
+                                .into(holder.profileIv);
                     }
 
                     @Override
@@ -72,6 +71,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
+
         public ImageView profileIv;
 
         public ViewHolder(View itemView) {

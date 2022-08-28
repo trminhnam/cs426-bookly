@@ -42,8 +42,8 @@ public class ProfileFragment extends Fragment {
     FirebaseStorage storage;
 
     // recycler view
-    RecyclerView recyclerView;
-    ArrayList<FollowModel> list;
+    RecyclerView followerRv;
+    ArrayList<FollowModel> followerList;
 
     // other view
     ImageView changeCoverPhotoIv, coverPhotoIv;
@@ -123,7 +123,8 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // get user information from firebase and firebase storage
+
+        // get profile information from firebase and firebase storage
         database.getReference().child("Users").child(auth.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -158,14 +159,35 @@ public class ProfileFragment extends Fragment {
                 });
 
         // recycler view for friend list
-        recyclerView = view.findViewById(R.id.rv_friend);
+        followerRv = view.findViewById(R.id.rv_friend);
 
-        list = new ArrayList<>();
+        followerList = new ArrayList<>();
 
-        FollowersAdapter adapter = new FollowersAdapter(list, getContext());
+        FollowersAdapter adapter = new FollowersAdapter(followerList, getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(adapter);
+        followerRv.setLayoutManager(linearLayoutManager);
+        followerRv.setAdapter(adapter);
+
+        // get list of followers
+        database.getReference()
+                .child("Users")
+                .child(auth.getUid())
+                .child("Followers")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                            FollowModel followModel = dataSnapshot.getValue(FollowModel.class);
+                            followerList.add(followModel);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
         return view;
     }
