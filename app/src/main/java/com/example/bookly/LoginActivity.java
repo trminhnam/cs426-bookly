@@ -251,14 +251,15 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (currentUser != null){
-//            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//            finish();
-//        }
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (currentUser != null){
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
