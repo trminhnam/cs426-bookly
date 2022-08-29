@@ -136,6 +136,63 @@ public class CommentActivity extends AppCompatActivity {
                     }
                 });
 
+        // change reaction button image if user already liked the post
+        database.getReference()
+                .child("Posts")
+                .child(postID)
+                .child("likes")
+                .child(auth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            postLikeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+                        } else {
+                            postLikeTv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    database.getReference()
+                                            .child("Posts")
+                                            .child(postID)
+                                            .child("likes")
+                                            .child(auth.getUid())
+                                            .setValue(true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    database.getReference()
+                                                            .child("Posts")
+                                                            .child(postID)
+                                                            .child("postLike")
+                                                            .setValue(Integer.parseInt(postLikeTv.getText().toString()) + 1) // increase likes
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    postLikeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+
+                                                                }
+                                                            });
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+
+                                                }
+                                            });
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+        // add comment to firebase
         commentPostButtonIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -198,7 +255,7 @@ public class CommentActivity extends AppCompatActivity {
             });
 
 
-        // load comment from firebase
+        // load comments from firebase
         commentRv = findViewById(R.id.commentRv);
         commentList = new ArrayList<>();
         CommentAdapter adapter = new CommentAdapter(this, commentList);
@@ -226,6 +283,7 @@ public class CommentActivity extends AppCompatActivity {
 
                     }
                 });
+
     }
 
     @Override
