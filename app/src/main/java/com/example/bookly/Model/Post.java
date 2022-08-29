@@ -7,6 +7,8 @@ public class Post {
     private String postedBy;
     private String postContent;
     private long postedAt;
+    private int postLike;
+    private int commentCount;
 
     public Post(String postID, String postImage, String postedBy, String postContent, long postedAt) {
         this.postID = postID;
@@ -60,7 +62,23 @@ public class Post {
         this.postedAt = postedAt;
     }
 
-//    String name, about, like, comment, share;
+    public int getPostLike() {
+        return postLike;
+    }
+
+    public void setPostLike(int postLike) {
+        this.postLike = postLike;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    //    String name, about, like, comment, share;
 //
 //    public DashboardModel(int profile, int postImage, int save, String name, String about, String like, String comment, String share) {
 //        this.profile = profile;

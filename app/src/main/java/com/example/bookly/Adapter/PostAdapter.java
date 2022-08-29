@@ -1,6 +1,7 @@
 package com.example.bookly.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bookly.CommentActivity;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
 import com.example.bookly.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,6 +65,8 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                 .load(model.getPostImage())
                 .placeholder(R.drawable.placeholder)
                 .into(holder.postImageIv);
+        holder.likeTv.setText(model.getPostLike() + "");
+        holder.commentTv.setText(model.getCommentCount() + "");
         String content = model.getPostContent();
         if (content.equals("")){
             holder.postContentTv.setVisibility(View.GONE);
@@ -90,6 +96,73 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
 
                     }
                 });
+
+        database.getReference()
+                .child("Posts")
+                .child(model.getPostID())
+                .child("likes")
+                .child(auth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+                        } else {
+                            holder.likeTv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    database.getReference()
+                                            .child("Posts")
+                                            .child(model.getPostID())
+                                            .child("likes")
+                                            .child(auth.getUid())
+                                            .setValue(true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    database.getReference()
+                                                            .child("Posts")
+                                                            .child(model.getPostID())
+                                                            .child("postLike")
+                                                            .setValue(model.getPostLike() + 1) // increase likes
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+
+                                                                }
+                                                            });
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+
+                                                }
+                                            });
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+        holder.commentTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra("postID", model.getPostID());
+                intent.putExtra("postedBy", model.getPostedBy());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
+
 
 //        holder.profile.setImageResource(model.getProfile());
 //        holder.postImage.setImageResource(model.getPostImage());
