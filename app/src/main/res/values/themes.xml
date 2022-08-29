@@ -21,4 +21,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorAccent</item>
     </style>
+
+    <style name="ShapeAppearanceOverlayExtended" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
 </resources>

@@ -28,4 +28,5 @@
     <color name="holo_blue">#7CC2F6</color>
 
     <color name="gray">#808080</color>
+    <color name="navigation_bg">#FFFFFF</color>
 </resources>
