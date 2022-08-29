@@ -25,10 +25,15 @@ public class SentimentAnalysis {
     static private String URL = "https://api-inference.huggingface.co/models/vietnhatthai/distilbert-base-uncased-finetuned-sst-2-english";
 
     public SentimentAnalysis () {
+        // TODO: run analysis text on background and using Listener
     }
 
     public SentimentModel predict(String data){
         String response = "[[{\"label\":\"NEGATIVE\",\"score\":0.0},{\"label\":\"POSITIVE\",\"score\":1.0}]]";
+
+        if (data.length() == 0) {
+            return new SentimentModel();
+        }
 
         try{
             response = new CallAPI().execute(URL, data).get();
