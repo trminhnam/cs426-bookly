@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.bookly.Adapter.CommentAdapter;
 import com.example.bookly.Model.Comment;
+import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -170,6 +171,18 @@ public class CommentActivity extends AppCompatActivity {
                                                                 public void onSuccess(Void unused) {
                                                                     postLikeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
 
+                                                                    Notification notification = new Notification();
+                                                                    notification.setNotificationBy(auth.getUid());
+                                                                    notification.setNotificationAt(new Date().getTime());
+                                                                    notification.setPostID(postID);
+                                                                    notification.setPostedBy(postedBy);
+                                                                    notification.setType("Like");
+
+                                                                    database.getReference()
+                                                                            .child("Notifications")
+                                                                            .child(postedBy)
+                                                                            .push()
+                                                                            .setValue(notification);
                                                                 }
                                                             });
                                                 }
@@ -233,6 +246,19 @@ public class CommentActivity extends AppCompatActivity {
                                                                 public void onSuccess(Void unused) {
                                                                     commentEt.setText("");
                                                                     Toast.makeText(CommentActivity.this, "Comment Successfully", Toast.LENGTH_SHORT).show();
+
+                                                                    Notification notification = new Notification();
+                                                                    notification.setNotificationBy(auth.getUid());
+                                                                    notification.setNotificationAt(new Date().getTime());
+                                                                    notification.setPostID(postID);
+                                                                    notification.setPostedBy(postedBy);
+                                                                    notification.setType("Comment");
+
+                                                                    database.getReference()
+                                                                            .child("Notifications")
+                                                                            .child(postedBy)
+                                                                            .push()
+                                                                            .setValue(notification);
                                                                 }
                                                             });
                                                 }
