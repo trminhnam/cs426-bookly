@@ -223,6 +223,8 @@ public class AddPostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (data==null)
+            return;
         if (data.getData() != null){
             uri = data.getData();
             postImageIv.setImageURI(uri);

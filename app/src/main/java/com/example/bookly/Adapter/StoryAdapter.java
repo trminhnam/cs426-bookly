@@ -98,6 +98,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             User user = snapshot.getValue(User.class);
+                            assert user != null;
                             Picasso.get()
                                     .load(user.getProfileImage())
                                     .placeholder(R.drawable.placeholder)
