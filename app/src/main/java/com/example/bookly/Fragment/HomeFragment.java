@@ -96,6 +96,9 @@ public class HomeFragment extends Fragment {
 
         galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 result -> {
+                    if (result == null) {
+                        return;
+                    }
                     addStoryImage.setImageURI(result);
                     dialog.show();
 

@@ -195,6 +195,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {
+            return;
+        }
         if (requestCode == 11) {
             if (data.getData() != null) {
                 Uri uri = data.getData();
