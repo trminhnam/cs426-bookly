@@ -13,5 +13,6 @@
     <!--    -->
 
     <string name="firebaseDatabase">https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+    <string name="firebase_database_link">https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 
 </resources>

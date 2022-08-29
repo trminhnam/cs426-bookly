@@ -1,5 +1,6 @@
 package com.example.bookly;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,6 +21,7 @@ import com.example.bookly.Fragment.ProfileFragment;
 import com.example.bookly.Fragment.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     // save all the fragments in this array
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static BottomNavigationView navigation;
     Toolbar toolbar;
 
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setVisibility(View.GONE);
         navigation = findViewById(R.id.navigation);
 
+        // firebase
+        auth = FirebaseAuth.getInstance();
+
+        // set default fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout_container, new HomeFragment());
         transaction.commit();
@@ -64,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_addpost:
                         toolbar.setVisibility(View.GONE);
                         transaction.replace(R.id.frame_layout_container, new AddPostFragment());
+//                        navigation.setVisibility(View.GONE);
                         transaction.commit();
                         return true;
                     case R.id.navigation_search:
@@ -86,5 +94,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.profile_menu, menu);
         return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.profile_setting:
+                auth.signOut();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

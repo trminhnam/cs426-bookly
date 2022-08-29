@@ -70,13 +70,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="16dp"
-                android:background="@color/white"
-                android:src="@drawable/ic_baseline_image_24"
+                android:src="@drawable/ic_change_image_svgrepo_com"
                 app:layout_constraintBottom_toBottomOf="@+id/llProfileFragment"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
-                android:id="@+id/ivTickProfileFragment"
+                android:id="@+id/ivVerifyAccountProfileFragment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/checkbox_on_background"
