@@ -83,10 +83,12 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
             holder.name.setText(model.getName());
             holder.status.setPortionsCount(model.getStories().size());
 
-            UserStory latestStory = model.getStories().get(model.getStories().size() - 1);
-            Picasso.get()
-                    .load(latestStory.getImage())
-                    .into(holder.storyImg);
+            if (model.getStories().size() > 0) {
+                UserStory latestStory = model.getStories().get(model.getStories().size() - 1);
+                Picasso.get()
+                        .load(latestStory.getImage())
+                        .into(holder.storyImg);
+            }
 
             FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app")
                     .getReference()
@@ -102,33 +104,30 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                                     .into(holder.profile);
                             holder.name.setText(user.getName());
 
-                            holder.storyImg.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    ArrayList<MyStory> myStories = new ArrayList<>();
-                                    for (UserStory stories : model.getStories()){
-                                        myStories.add( new MyStory(stories.getImage()));
-                                        new StoryView.Builder(((AppCompatActivity) context).getSupportFragmentManager())
-                                                .setStoriesList(myStories) // Required
-                                                .setStoryDuration(5000) // Default is 2000 Millis (2 Seconds)
-                                                .setTitleText(user.getName()) // Default is Hidden
-                                                .setSubtitleText("") // Default is Hidden
-                                                .setTitleLogoUrl(user.getProfileImage()) // Default is Hidden
-                                                .setStoryClickListeners(new StoryClickListeners() {
-                                                    @Override
-                                                    public void onDescriptionClickListener(int position) {
-                                                        //your action
-                                                    }
-
-                                                    @Override
-                                                    public void onTitleIconClickListener(int position) {
-                                                        //your action
-                                                    }
-                                                }) // Optional Listeners
-                                                .build() // Must be called before calling show method
-                                                .show();
-                                    }
+                            holder.storyImg.setOnClickListener(v -> {
+                                ArrayList<MyStory> myStories = new ArrayList<>();
+                                for (UserStory stories : model.getStories()){
+                                    myStories.add( new MyStory(stories.getImage()));
                                 }
+                                new StoryView.Builder(((AppCompatActivity) context).getSupportFragmentManager())
+                                        .setStoriesList(myStories)
+                                        .setStoryDuration(2000) // 2000 Millis (2 Seconds)
+                                        .setTitleText(user.getName())
+                                        .setSubtitleText("")
+                                        .setTitleLogoUrl(user.getProfileImage())
+//                                                .setStoryClickListeners(new StoryClickListeners() {
+//                                                    @Override
+//                                                    public void onDescriptionClickListener(int position) {
+//
+//                                                    }
+//
+//                                                    @Override
+//                                                    public void onTitleIconClickListener(int position) {
+//
+//                                                    }
+//                                                })
+                                        .build() // Must be called before calling show method
+                                        .show();
                             });
                         }
 
