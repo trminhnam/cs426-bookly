@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.example.bookly.Adapter.PostAdapter;
 import com.example.bookly.Adapter.StoryAdapter;
 import com.example.bookly.Model.Post;
@@ -35,7 +36,8 @@ import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
-    RecyclerView storyRv, dashboardRv;
+    RecyclerView storyRv;
+    ShimmerRecyclerView dashboardRv;
     ArrayList<StoryModel> storyList;
     ArrayList<Post> postList;
 
@@ -68,9 +70,7 @@ public class HomeFragment extends Fragment {
         database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
         storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
 
-
         dialog = new ProgressDialog(getContext());
-
     }
 
     @Override
@@ -171,13 +171,14 @@ public class HomeFragment extends Fragment {
 
         // Add dashboard recycle view
         dashboardRv = view.findViewById(R.id.dashboardRv);
+        dashboardRv.showShimmerAdapter();
+
         postList = new ArrayList<>();
         PostAdapter postAdapter = new PostAdapter(postList, getContext());
 
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext());
         dashboardRv.setLayoutManager(linearLayoutManager1);
         dashboardRv.setNestedScrollingEnabled(true);
-        dashboardRv.setAdapter(postAdapter);
 
         database.getReference().child("Posts")
                 .addValueEventListener(new ValueEventListener() {
@@ -192,6 +193,8 @@ public class HomeFragment extends Fragment {
                             postList.add(post);
 
                         }
+                        dashboardRv.setAdapter(postAdapter);
+                        dashboardRv.hideShimmerAdapter();
                         postAdapter.notifyDataSetChanged();
                     }
 
