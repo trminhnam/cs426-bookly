@@ -80,12 +80,17 @@
                 app:layout_constraintStart_toStartOf="@+id/appTextView"
                 app:layout_constraintTop_toBottomOf="@id/storyRecycleView" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.cooltechworks.views.shimmer.ShimmerRecyclerView
                 android:id="@+id/dashboardRv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_bar_2" />
+                app:layout_constraintTop_toBottomOf="@id/view_bar_2"
+                app:shimmer_demo_child_count="5"
+                app:shimmer_demo_grid_child_count="5"
+                app:shimmer_demo_layout="@layout/loading_post"
+                />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
