@@ -22,9 +22,11 @@
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/follow_btn_background.xml" value="0.226" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_baseline_add_circle_outline_24.xml" value="0.1405" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_change_image_svgrepo_com.xml" value="0.21" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_heart_svgrepo_com.xml" value="0.181" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1695" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/post_active_btn.xml" value="0.226" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/post_btn_bg.xml" value="0.226" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/activity_comment.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/activity_login.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/activity_main.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/activity_register_modern.xml" value="0.4" />
@@ -34,6 +36,7 @@
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/fragment_profile.xml" value="0.4" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/fragment_request.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/fragment_search.xml" value="0.325" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_comment.xml" value="0.32395833333333335" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_dashboard.xml" value="0.536" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_friend.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_profile.xml" value="0.24114583333333334" />
