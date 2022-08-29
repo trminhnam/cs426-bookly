@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/story_image_modern"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/add_story_icon"
+        android:background="@drawable/add_story_bg"
+        android:outlineAmbientShadowColor="#BEBABA"
+        android:outlineSpotShadowColor="#BEBABA"/>
+
+</LinearLayout>

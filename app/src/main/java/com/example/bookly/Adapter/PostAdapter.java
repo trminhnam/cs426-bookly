@@ -1,5 +1,6 @@
 package com.example.bookly.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
 
@@ -57,6 +59,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
         return new viewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         Post model = dashboardList.get(position);
@@ -82,6 +85,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
+                        assert user != null;
                         Picasso.get()
                                 .load(user.getProfileImage())
                                 .placeholder(R.drawable.placeholder)
@@ -101,47 +105,29 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                 .child("Posts")
                 .child(model.getPostID())
                 .child("likes")
-                .child(auth.getCurrentUser().getUid())
+                .child(Objects.requireNonNull(auth.getCurrentUser()).getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()){
                             holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
                         } else {
-                            holder.likeTv.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    database.getReference()
+                            holder.likeTv.setOnClickListener(v -> database.getReference()
+                                    .child("Posts")
+                                    .child(model.getPostID())
+                                    .child("likes")
+                                    .child(Objects.requireNonNull(auth.getUid()))
+                                    .setValue(true)
+                                    .addOnSuccessListener(unused -> database.getReference()
                                             .child("Posts")
                                             .child(model.getPostID())
-                                            .child("likes")
-                                            .child(auth.getUid())
-                                            .setValue(true)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    database.getReference()
-                                                            .child("Posts")
-                                                            .child(model.getPostID())
-                                                            .child("postLike")
-                                                            .setValue(model.getPostLike() + 1) // increase likes
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void unused) {
-                                                                    holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+                                            .child("postLike")
+                                            .setValue(model.getPostLike() + 1) // increase likes
+                                            .addOnSuccessListener(unused1 ->
+                                                    holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0)))
+                                    .addOnFailureListener(e -> {
 
-                                                                }
-                                                            });
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-
-                                                }
-                                            });
-                                }
-                            });
+                                    }));
 
                         }
                     }
@@ -152,15 +138,12 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                     }
                 });
 
-        holder.commentTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, CommentActivity.class);
-                intent.putExtra("postID", model.getPostID());
-                intent.putExtra("postedBy", model.getPostedBy());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-            }
+        holder.commentTv.setOnClickListener(v -> {
+            Intent intent = new Intent(context, CommentActivity.class);
+            intent.putExtra("postID", model.getPostID());
+            intent.putExtra("postedBy", model.getPostedBy());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         });
 
 
