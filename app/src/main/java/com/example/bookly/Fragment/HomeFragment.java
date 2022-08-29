@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -48,7 +49,7 @@ public class HomeFragment extends Fragment {
 
     ProgressDialog dialog;
 
-    RoundedImageView addStoryImage;
+    ImageButton addStoryImage;
     ActivityResultLauncher<String> galleryLauncher;
 
     public HomeFragment() {
@@ -77,7 +78,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_modern, container, false);
 
         database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
         storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");

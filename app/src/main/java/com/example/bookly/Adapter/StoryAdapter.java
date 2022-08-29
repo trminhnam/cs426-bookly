@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +41,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
     private addStoryListener addStoryCallback;
 
     public interface addStoryListener {
-        void onAddStoryClick(RoundedImageView addStoryImage);
+        void onAddStoryClick(ImageButton addStoryImage);
     }
 
     public StoryAdapter(ArrayList<StoryModel> storyList, Context context) {
@@ -58,10 +59,10 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
     @Override
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_ADD_STORY) {
-            View view = LayoutInflater.from(context).inflate(R.layout.rv_item_add_story, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.rv_item_add_story_modern, parent, false);
             return new viewHolder(view, viewType);
         } else {
-            View view = LayoutInflater.from(context).inflate(R.layout.rv_item_story, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.rv_item_story_modern, parent, false);
             return new viewHolder(view, viewType);
         }
     }
@@ -77,18 +78,15 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
             });
         } else {
             StoryModel model = storyList.get(position);
-            holder.storyImg.setImageResource(model.getStory());
             holder.profile.setImageResource(model.getProfile());
-            holder.storyType.setImageResource(model.getStoryType());
-            holder.name.setText(model.getName());
             holder.status.setPortionsCount(model.getStories().size());
 
-            if (model.getStories().size() > 0) {
-                UserStory latestStory = model.getStories().get(model.getStories().size() - 1);
-                Picasso.get()
-                        .load(latestStory.getImage())
-                        .into(holder.storyImg);
-            }
+//            if (model.getStories().size() > 0) {
+//                UserStory latestStory = model.getStories().get(model.getStories().size() - 1);
+//                Picasso.get()
+//                        .load(latestStory.getImage())
+//                        .into(holder.storyImg);
+//            }
 
             FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app")
                     .getReference()
@@ -102,9 +100,8 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                                     .load(user.getProfileImage())
                                     .placeholder(R.drawable.placeholder)
                                     .into(holder.profile);
-                            holder.name.setText(user.getName());
 
-                            holder.storyImg.setOnClickListener(v -> {
+                            holder.profile.setOnClickListener(v -> {
                                 ArrayList<MyStory> myStories = new ArrayList<>();
                                 for (UserStory stories : model.getStories()){
                                     myStories.add( new MyStory(stories.getImage()));
@@ -155,24 +152,20 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
     public class viewHolder extends RecyclerView.ViewHolder {
 
         // for story data
-        ImageView storyImg, profile, storyType;
-        TextView name;
+        ImageView  profile;
         CircularStatusView status;
 
         // for add story
-        RoundedImageView addStoryImage;
+        ImageButton addStoryImage;
 
         public viewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
             // set view holder link to view
             if (viewType == TYPE_ADD_STORY) {
                 // set onclick listener for add story button
-                addStoryImage = itemView.findViewById(R.id.story_image);
+                addStoryImage = itemView.findViewById(R.id.story_image_modern);
             } else {
-                storyImg = itemView.findViewById(R.id.story_image);
                 profile = itemView.findViewById(R.id.profile_image);
-                storyType = itemView.findViewById(R.id.story_type);
-                name = itemView.findViewById(R.id.name);
                 status = itemView.findViewById(R.id.circular_status_view);
             }
         }

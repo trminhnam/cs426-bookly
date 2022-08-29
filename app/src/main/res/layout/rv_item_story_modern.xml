@@ -24,9 +24,9 @@
         app:layout_constraintTop_toTopOf="@id/profile_image"
         app:layout_constraintEnd_toEndOf="@id/profile_image"
         app:layout_constraintBottom_toBottomOf="@id/profile_image"
-        app:portion_color="@color/purple_500"
-        app:portion_spacing="5dp"
-        app:portion_width="2dp"
+        app:portion_color="@color/orange_pastel"
+        app:portion_spacing="10dp"
+        app:portion_width="3dp"
         app:portions_count="10"
         android:elevation="3dp"/>
 
