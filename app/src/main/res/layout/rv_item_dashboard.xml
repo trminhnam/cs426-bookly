@@ -118,7 +118,7 @@
         android:drawablePadding="6dp"
         android:gravity="center"
         android:text="123"
-        app:drawableLeftCompat="@drawable/ic_baseline_thumb_up_24" />
+        app:drawableLeftCompat="@drawable/ic_heart_svgrepo_com" />
 
     <TextView
         android:id="@+id/comment"

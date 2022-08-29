@@ -1,7 +1,7 @@
 package com.example.bookly.Fragment;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +14,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.example.bookly.Adapter.PostAdapter;
 import com.example.bookly.Adapter.StoryAdapter;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.StoryModel;
 import com.example.bookly.Model.UserStory;
 import com.example.bookly.R;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,15 +28,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
-    RecyclerView storyRv, dashboardRv;
+    RecyclerView storyRv;
+    ShimmerRecyclerView dashboardRv;
     ArrayList<StoryModel> storyList;
     ArrayList<Post> postList;
 
@@ -69,9 +70,7 @@ public class HomeFragment extends Fragment {
         database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
         storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
 
-
         dialog = new ProgressDialog(getContext());
-
     }
 
     @Override
@@ -102,44 +101,29 @@ public class HomeFragment extends Fragment {
 
                     final StorageReference reference = storage.getReference()
                             .child("story")
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                             .child(new Date().getTime() + "");
-                    reference.putFile(result).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    StoryModel story = new StoryModel();
-                                    story.setStoryAt(new Date().getTime());
+                    reference.putFile(result).addOnSuccessListener(taskSnapshot -> reference.getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                        StoryModel story = new StoryModel();
+                        story.setStoryAt(new Date().getTime());
+
+                        database.getReference()
+                                .child("stories")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child("postedBy")
+                                .setValue(story.getStoryAt())
+                                .addOnSuccessListener(unused -> {
+                                    UserStory userStory = new UserStory(uri.toString(), story.getStoryAt());
 
                                     database.getReference()
                                             .child("stories")
                                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .child("postedBy")
-                                            .setValue(story.getStoryAt())
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    UserStory userStory = new UserStory(uri.toString(), story.getStoryAt());
-
-                                                    database.getReference()
-                                                            .child("stories")
-                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .child("userStories")
-                                                            .push()
-                                                            .setValue(userStory).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void unused) {
-                                                                    dialog.dismiss();
-                                                                }
-                                                            });
-                                                }
-                                            });
-                                    };
-                            });
-                        }
-                    });
+                                            .child("userStories")
+                                            .push()
+                                            .setValue(userStory).addOnSuccessListener(unused1 -> dialog.dismiss());
+                                });
+                        }));
             });
 
         StoryAdapter adapter = new StoryAdapter(storyList, getContext(), addStoryCallback);
@@ -150,10 +134,14 @@ public class HomeFragment extends Fragment {
 
         database.getReference()
                 .child("stories").addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()){
-                            for (int i = 1; i < storyList.size(); i++) storyList.remove(1); // keep only first item
+                            // keep only first item
+                            if (storyList.size() > 1) {
+                                storyList.subList(1, storyList.size()).clear();
+                            }
                             for (DataSnapshot storySnapshot :snapshot.getChildren())
                             {
                                 StoryModel story = new StoryModel();
@@ -180,24 +168,30 @@ public class HomeFragment extends Fragment {
 
         // Add dashboard recycle view
         dashboardRv = view.findViewById(R.id.dashboardRv);
+        dashboardRv.showShimmerAdapter();
+
         postList = new ArrayList<>();
         PostAdapter postAdapter = new PostAdapter(postList, getContext());
 
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext());
         dashboardRv.setLayoutManager(linearLayoutManager1);
         dashboardRv.setNestedScrollingEnabled(true);
-        dashboardRv.setAdapter(postAdapter);
 
         database.getReference().child("Posts")
                 .addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Post post = dataSnapshot.getValue(Post.class);
+                            assert post != null;
+                            post.setPostID(dataSnapshot.getKey());
                             postList.add(post);
 
                         }
+                        dashboardRv.setAdapter(postAdapter);
+                        dashboardRv.hideShimmerAdapter();
                         postAdapter.notifyDataSetChanged();
                     }
 

@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.bookly.API.SentimentAnalysis;
+import com.example.bookly.Model.SentimentModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -53,6 +55,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_modern);
+
+        // example of how to use the SentimentAnalysis class
+        SentimentModel res = new SentimentAnalysis().predict("This is a very bad book");
+        Log.d("SentimentModel", res.toString());
+        SentimentModel res1 = new SentimentAnalysis().predict("This is a very good book");
+        Log.d("SentimentModel", res1.toString());
 
         // firebase
         firebaseAuth = FirebaseAuth.getInstance();

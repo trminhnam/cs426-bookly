@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImageCommentItemIv"
+        android:layout_width="@dimen/_50mdp"
+        android:layout_height="@dimen/_50mdp"
+        android:padding="4dp"
+        android:src="@drawable/cartoon_penguin_dressed"
+        app:civ_border_color="@color/blue"
+        app:civ_border_width="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/profileImageCommentItemIv"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@id/profileImageCommentItemIv"
+        android:layout_marginStart="8dp"
+        >
+
+        <TextView
+            android:id="@+id/nameCommentItemTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Name"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            />
+
+        <TextView
+            android:id="@+id/aboutCommentItemTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About"
+            />
+
+
+        <TextView
+            android:id="@+id/timeCommentItemTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="time"
+            />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
