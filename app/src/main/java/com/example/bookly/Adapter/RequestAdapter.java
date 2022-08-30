@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookly.Model.NotificationModel;
 import com.example.bookly.Model.RequestModel;
 import com.example.bookly.R;
 

@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookly.CommentActivity;
+import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
 import com.example.bookly.R;
@@ -29,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
@@ -40,7 +43,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
     FirebaseAuth auth;
     FirebaseDatabase database;
     FirebaseStorage storage;
-
 
     public PostAdapter(ArrayList<Post> dashboardList, Context context) {
         this.dashboardList = dashboardList;
@@ -64,10 +66,16 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         Post model = dashboardList.get(position);
 
-        Picasso.get()
-                .load(model.getPostImage())
-                .placeholder(R.drawable.placeholder)
-                .into(holder.postImageIv);
+        if (model.getPostImage().equals("")) {
+            holder.postImageIv.setVisibility(View.GONE);
+        } else {
+            holder.postImageIv.setVisibility(View.VISIBLE);
+            Picasso.get()
+                    .load(model.getPostImage())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.postImageIv);
+        }
+
         holder.likeTv.setText(model.getPostLike() + "");
         holder.commentTv.setText(model.getCommentCount() + "");
         String content = model.getPostContent();
@@ -98,7 +106,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                                 .into(holder.profileIv);
                         holder.nameTv.setText(user.getName());
                         holder.aboutTv.setText(user.getAddress());
-
                     }
 
                     @Override
@@ -118,23 +125,52 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                         if (snapshot.exists()){
                             holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
                         } else {
-                            holder.likeTv.setOnClickListener(v -> database.getReference()
-                                    .child("Posts")
-                                    .child(model.getPostID())
-                                    .child("likes")
-                                    .child(Objects.requireNonNull(auth.getUid()))
-                                    .setValue(true)
-                                    .addOnSuccessListener(unused -> database.getReference()
+                            holder.likeTv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    database.getReference()
                                             .child("Posts")
                                             .child(model.getPostID())
-                                            .child("postLike")
-                                            .setValue(model.getPostLike() + 1) // increase likes
-                                            .addOnSuccessListener(unused1 ->
-                                                    holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0)))
-                                    .addOnFailureListener(e -> {
+                                            .child("likes")
+                                            .child(Objects.requireNonNull(auth.getUid()))
+                                            .setValue(true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    database.getReference()
+                                                            .child("Posts")
+                                                            .child(model.getPostID())
+                                                            .child("postLike")
+                                                            .setValue(model.getPostLike() + 1) // increase likes
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
 
-                                    }));
+                                                                    Notification notification = new Notification();
+                                                                    notification.setNotificationBy(auth.getUid());
+                                                                    notification.setNotificationAt(new Date().getTime());
+                                                                    notification.setPostID(model.getPostID());
+                                                                    notification.setPostedBy(model.getPostedBy());
+                                                                    notification.setType("Like");
 
+                                                                    database.getReference()
+                                                                            .child("Notifications")
+                                                                            .child(model.getPostedBy())
+                                                                            .push()
+                                                                            .setValue(notification);
+                                                                }
+                                                            });
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            });
                         }
                     }
 
@@ -151,17 +187,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
-
-
-//        holder.profile.setImageResource(model.getProfile());
-//        holder.postImage.setImageResource(model.getPostImage());
-//        holder.save.setImageResource(model.getSave());
-//        holder.name.setText(model.getName());
-//        holder.about.setText(model.getAbout());
-//        holder.like.setText(model.getLike());
-//        holder.comment.setText(model.getComment());
-//        holder.share.setText(model.getShare());
-
     }
 
     @Override

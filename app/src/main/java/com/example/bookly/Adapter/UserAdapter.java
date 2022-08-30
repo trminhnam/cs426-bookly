@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookly.Model.FollowModel;
+import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.User;
 import com.example.bookly.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
 
@@ -38,7 +40,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
     FirebaseAuth auth;
     FirebaseDatabase database;
     FirebaseStorage storage;
-
 
     public UserAdapter(Context context, ArrayList<User> userList) {
         this.context = context;
@@ -101,7 +102,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
                                             .child("Users")
                                             .child(user.getUserID())
                                             .child("Followers")
-                                            .child(FirebaseAuth.getInstance().getUid())
+                                            .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                                             .setValue(followModel)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -121,6 +122,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
                                                                     holder.followBtn.setTextColor(ContextCompat.getColor(context, R.color.gray));
                                                                     holder.followBtn.setEnabled(false);
                                                                     Toast.makeText(context, "Followed " + user.getName(), Toast.LENGTH_SHORT).show();
+
+                                                                    Notification notification = new Notification();
+                                                                    notification.setNotificationBy(auth.getUid());
+                                                                    notification.setNotificationAt(new Date().getTime());
+                                                                    notification.setType("Follow");
+
+                                                                    database.getReference()
+                                                                            .child("Notifications")
+                                                                            .child(user.getUserID())
+                                                                            .push()
+                                                                            .setValue(notification);
+
+
                                                                 }
                                                             });
                                                 }
