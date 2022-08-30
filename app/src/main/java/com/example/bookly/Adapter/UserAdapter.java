@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
 
@@ -39,7 +40,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
     FirebaseAuth auth;
     FirebaseDatabase database;
     FirebaseStorage storage;
-
 
     public UserAdapter(Context context, ArrayList<User> userList) {
         this.context = context;
@@ -102,7 +102,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
                                             .child("Users")
                                             .child(user.getUserID())
                                             .child("Followers")
-                                            .child(FirebaseAuth.getInstance().getUid())
+                                            .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                                             .setValue(followModel)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override

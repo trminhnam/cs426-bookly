@@ -100,14 +100,20 @@ public class CommentActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Post post = snapshot.getValue(Post.class);
-                        Picasso.get()
-                                .load(post.getPostImage())
-                                .placeholder(R.drawable.placeholder)
-                                .into(postImageIv);
+
+                        if (post.getPostImage().equals("")) {
+                            postImageIv.setVisibility(View.GONE);
+                        } else {
+                            postImageIv.setVisibility(View.VISIBLE);
+                            Picasso.get()
+                                    .load(post.getPostImage())
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(postImageIv);
+                        }
+
                         postContentTv.setText(post.getPostContent());
                         postLikeTv.setText(post.getPostLike() + "");
                         commentCountTv.setText(post.getCommentCount() + "");
-
                     }
 
                     @Override

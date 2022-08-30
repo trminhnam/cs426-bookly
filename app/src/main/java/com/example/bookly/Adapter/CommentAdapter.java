@@ -68,6 +68,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.viewHold
                                 .load(user.getProfileImage())
                                 .placeholder(R.drawable.placeholder)
                                 .into(holder.profileIv);
+
                         holder.userNameTv.setText(user.getName());
                     }
 
