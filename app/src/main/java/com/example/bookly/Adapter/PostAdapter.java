@@ -28,6 +28,7 @@ import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
 import com.example.bookly.R;
+import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,6 +75,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         Post model = dashboardList.get(position);
 
+        holder.aboutTv.setText(TimeAgo.using(model.getPostedAt()));
+
         if (model.getPostImage().equals("")) {
             holder.postImageIv.setVisibility(View.GONE);
         } else {
@@ -107,7 +110,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                                 .placeholder(R.drawable.placeholder)
                                 .into(holder.profileIv);
                         holder.nameTv.setText(user.getName());
-                        holder.aboutTv.setText(user.getAddress());
+//                        holder.aboutTv.setText(user.get);
                     }
 
                     @Override
