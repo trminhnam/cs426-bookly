@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         // set default fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout_container, new HomeFragment());
+        fragment = getFragment("Home Fragment");
+        transaction.replace(R.id.frame_layout_container, fragment, "Home Fragment");
         transaction.commit();
 
 
@@ -65,22 +66,22 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new HomeFragment(), "Home Fragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment("HomeFragment"), "HomeFragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_notification:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new NotificationFragment(), "Notification Fragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment("NotificationFragment"), "NotificationFragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_search:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new SearchFragment(), "Search Fragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment("SearchFragment"), "SearchFragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_profile:
                         toolbar.setVisibility(View.VISIBLE);
-                        transaction.replace(R.id.frame_layout_container, new ProfileFragment(), "Profile Fragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment("ProfileFragment"), "ProfileFragment");
                         transaction.commit();
                         return true;
                 }
@@ -100,6 +101,21 @@ public class MainActivity extends AppCompatActivity {
                 transaction.commit();
             }
         });
+    }
+
+    private Fragment getFragment(String fragmentName) {
+        switch (fragmentName) {
+            case "NotificationFragment":
+                return NotificationFragment.getInstance();
+            case "SearchFragment":
+                return SearchFragment.getInstance();
+            case "ProfileFragment":
+                return ProfileFragment.getInstance();
+            case "Add PostFragment":
+                return AddPostFragment.getInstance();
+            default: // Home Fragment
+                return HomeFragment.getInstance();
+        }
     }
 
     @Override
@@ -130,11 +146,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            if (getSupportFragmentManager().findFragmentByTag("Home Fragment") == null)
+            if (getSupportFragmentManager().findFragmentByTag("HomeFragment") == null)
             {
                 toolbar.setVisibility(View.GONE);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_layout_container, new HomeFragment(), "Home Fragment")
+                        .replace(R.id.frame_layout_container, getFragment("HomeFragment"), "HomeFragment")
                         .commit();
             } else {
                 super.onBackPressed();

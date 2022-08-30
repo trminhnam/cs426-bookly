@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 
 public class SearchFragment extends Fragment {
+    private static SearchFragment instance;
 
     // Firebase
     FirebaseAuth auth;
@@ -36,6 +37,12 @@ public class SearchFragment extends Fragment {
 
     RecyclerView usersRv;;
 
+    public static SearchFragment getInstance() {
+        if (instance == null) {
+            instance = new SearchFragment();
+        }
+        return instance;
+    }
 
     public SearchFragment() {
         // Required empty public constructor

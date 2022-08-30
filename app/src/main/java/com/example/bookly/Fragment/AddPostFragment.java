@@ -58,6 +58,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class AddPostFragment extends Fragment {
+    private static AddPostFragment instance;
 
     PostEditText postContentEt;
     AppCompatButton postBtn;
@@ -88,17 +89,15 @@ public class AddPostFragment extends Fragment {
     // gps permission constants
     private static final int LOCATION_REQUEST_CODE = 100;
 
-    public AddPostFragment() {
-        // Required empty public constructor
+    public static AddPostFragment getInstance() {
+        if (instance == null) {
+            instance = new AddPostFragment();
+        }
+        return instance;
     }
 
-
-    public static AddPostFragment newInstance(String param1, String param2) {
-        AddPostFragment fragment = new AddPostFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
+    public AddPostFragment() {
+        // Required empty public constructor
     }
 
     @Override
@@ -252,20 +251,20 @@ public class AddPostFragment extends Fragment {
                                             Post post = new Post();
                                             String content = postContentEt.getText().toString();
                                             content = normalizerText(content);
-                                            
+
                                             // set post data
                                             post.setPostImage(uri.toString());
                                             post.setPostedBy(auth.getCurrentUser().getUid());
                                             post.setPostContent(content);
                                             post.setPostedAt(new Date().getTime());
-                                          
+
                                             // set post location
                                             post.setLocation(cur_lat, cur_lng);
                                             post.setAddress(address);
                                             post.setCity(city);
                                             post.setState(state);
                                             post.setCountry(country);
-                                          
+
                                             // analysis text
                                             SentimentModel analysisText = new SentimentAnalysis().predict(content);
                                             Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
@@ -321,14 +320,14 @@ public class AddPostFragment extends Fragment {
                     post.setPostedBy(auth.getCurrentUser().getUid());
                     post.setPostContent(content);
                     post.setPostedAt(new Date().getTime());
-                  
+
                     // set post location
                     post.setLocation(cur_lat, cur_lng);
                     post.setAddress(address);
                     post.setCity(city);
                     post.setState(state);
                     post.setCountry(country);
-                  
+
                     // analysis text
                     SentimentModel analysisText = new SentimentAnalysis().predict(content);
                     Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
