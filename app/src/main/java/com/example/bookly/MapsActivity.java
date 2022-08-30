@@ -45,9 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googleMap.addMarker(new MarkerOptions().position(sydney).title(UserName));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-//        LatLngBounds bounds = new LatLngBounds(new LatLng(lat, lng), new LatLng(lat, lng));
-//        mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(UserName));
-//        CameraUpdate camera = CameraUpdateFactory.newLatLngBounds(bounds, 2000,2000,2);
-//        mMap.animateCamera(camera);
+        // zoom
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
 }
