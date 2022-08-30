@@ -14,7 +14,7 @@
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/fragment_profile2.xml" value="0.25905797101449274" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_add_story.xml" value="0.25833333333333336" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_dashboard.xml" value="0.1" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_dashboard_modern.xml" value="1.2" />
+        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_dashboard_modern.xml" value="0.549645390070922" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_profile.xml" value="0.25833333333333336" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_story.xml" value="0.536" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_user.xml" value="0.259375" />
@@ -44,9 +44,7 @@
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/loading_post.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_comment.xml" value="0.32395833333333335" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_dashboard.xml" value="0.536" />
-        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_dashboard_modern.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_friend.xml" value="0.325" />
-        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_notification.xml" value="0.29259259259259257" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_profile.xml" value="0.24114583333333334" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_request.xml" value="0.325" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/layout/rv_item_story.xml" value="0.32395833333333335" />

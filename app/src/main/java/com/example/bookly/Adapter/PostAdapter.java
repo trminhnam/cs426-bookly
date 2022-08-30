@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookly.CommentActivity;
+import com.example.bookly.MapsActivity;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
@@ -90,6 +91,13 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
         {
             holder.locationTv.setVisibility(View.VISIBLE);
             holder.locationTv.setText(model.getState() + ", " + model.getCountry());
+            holder.locationTv.setOnClickListener(v -> {
+                Intent intent = new Intent(context, MapsActivity.class);
+                intent.putExtra("UserName", holder.nameTv.getText().toString());
+                intent.putExtra("lat", model.getLat());
+                intent.putExtra("lng", model.getLng());
+                context.startActivity(intent);
+            });
         }
 
         database.getReference()
