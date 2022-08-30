@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.bookly.Adapter.NotificationAdapter;
 import com.example.bookly.Model.Notification;
+import com.example.bookly.Model.Post;
 import com.example.bookly.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class NotiDetailFragment extends Fragment {
@@ -60,16 +63,6 @@ public class NotiDetailFragment extends Fragment {
         notificationRv = view.findViewById(R.id.notificationRv);
 
         notificationList = new ArrayList<>();
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
-//        notificationList.add(new Notification(R.drawable.resource_default, "Tran Minh Nam likes your book", "just now"));
 
         notificationAdapter = new NotificationAdapter(notificationList, getContext());
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -88,6 +81,14 @@ public class NotiDetailFragment extends Fragment {
                             notification.setNotificationID(dataSnapshot.getKey());
                             notificationList.add(notification);
                         }
+
+                        Collections.sort(notificationList, new Comparator<Notification>() {
+                            @Override
+                            public int compare(Notification o1, Notification o2) {
+                                return Long.compare(o2.getNotificationAt(), o1.getNotificationAt());
+                            }
+                        });
+
                         notificationAdapter.notifyDataSetChanged();
                     }
 
@@ -99,24 +100,4 @@ public class NotiDetailFragment extends Fragment {
 
         return view;
     }
-
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        if (notificationRv != null) {
-//            notificationRv.setAdapter(null);
-//        }
-//        notificationAdapter = null;
-//        notificationRv = null;
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        if (notificationRv != null) {
-//            notificationRv.setAdapter(null);
-//        }
-//        notificationAdapter = null;
-//        notificationRv = null;
-//    }
 }
