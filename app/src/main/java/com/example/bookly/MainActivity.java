@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 toolbar.setVisibility(View.GONE);
-                transaction.replace(R.id.frame_layout_container, new AddPostFragment());
+                transaction.replace(R.id.frame_layout_container, getFragment("AddPostFragment"), "AddPostFragment");
 //                        navigation.setVisibility(View.GONE);
                 transaction.commit();
             }
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 return SearchFragment.getInstance();
             case "ProfileFragment":
                 return ProfileFragment.getInstance();
-            case "Add PostFragment":
+            case "AddPostFragment":
                 return AddPostFragment.getInstance();
             default: // Home Fragment
                 return HomeFragment.getInstance();
