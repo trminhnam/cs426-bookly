@@ -13,12 +13,19 @@ import com.example.bookly.R;
 import com.google.android.material.tabs.TabLayout;
 
 public class NotificationFragment extends Fragment {
+    private static NotificationFragment instance;
 
     ViewPager viewPager;
     TabLayout tabLayout;
     ViewPagerAdapter _adapter;
 
 
+    public static NotificationFragment getInstance() {
+        if (instance == null) {
+            instance = new NotificationFragment();
+        }
+        return instance;
+    }
 
     public NotificationFragment() {
         // Required empty public constructor

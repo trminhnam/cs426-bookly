@@ -1,6 +1,7 @@
 package com.example.bookly.Fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +41,8 @@ import java.util.Date;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
+    @SuppressLint("StaticFieldLeak")
+    private static HomeFragment instance;
 
     RecyclerView storyRv;
     ShimmerRecyclerView dashboardRv;
@@ -57,6 +60,13 @@ public class HomeFragment extends Fragment {
     FloatingActionButton fab;
     NestedScrollView nestedScrollView;
     ActivityResultLauncher<String> galleryLauncher;
+
+    public static HomeFragment getInstance() {
+        if (instance == null) {
+            instance = new HomeFragment();
+        }
+        return instance;
+    }
 
     public HomeFragment() {
         // Required empty public constructor
@@ -78,6 +88,11 @@ public class HomeFragment extends Fragment {
         storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
 
         dialog = new ProgressDialog(getContext());
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override

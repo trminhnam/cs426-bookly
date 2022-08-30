@@ -1,9 +1,9 @@
 package com.example.bookly;
 
 import android.content.DialogInterface;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,12 +53,14 @@ public class MainActivity extends AppCompatActivity {
 
         // set default fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout_container, new HomeFragment());
+        fragment = getFragment("Home Fragment");
+        transaction.replace(R.id.frame_layout_container, fragment, "Home Fragment");
         transaction.commit();
 
 
         // set the listener for the bottom navigation bar
         navigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -67,22 +69,22 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new HomeFragment());
+                        transaction.replace(R.id.frame_layout_container, getFragment("HomeFragment"), "HomeFragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_notification:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new NotificationFragment());
+                        transaction.replace(R.id.frame_layout_container, getFragment("NotificationFragment"), "NotificationFragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_search:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new SearchFragment());
+                        transaction.replace(R.id.frame_layout_container, getFragment("SearchFragment"), "SearchFragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_profile:
                         toolbar.setVisibility(View.VISIBLE);
-                        transaction.replace(R.id.frame_layout_container, new ProfileFragment());
+                        transaction.replace(R.id.frame_layout_container, getFragment("ProfileFragment"), "ProfileFragment");
                         transaction.commit();
                         return true;
                 }
@@ -97,11 +99,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 toolbar.setVisibility(View.GONE);
-                transaction.replace(R.id.frame_layout_container, new AddPostFragment());
+                transaction.replace(R.id.frame_layout_container, getFragment("AddPostFragment"), "AddPostFragment");
 //                        navigation.setVisibility(View.GONE);
                 transaction.commit();
             }
         });
+    }
+
+    private Fragment getFragment(String fragmentName) {
+        switch (fragmentName) {
+            case "NotificationFragment":
+                return NotificationFragment.getInstance();
+            case "SearchFragment":
+                return SearchFragment.getInstance();
+            case "ProfileFragment":
+                return ProfileFragment.getInstance();
+            case "AddPostFragment":
+                return AddPostFragment.getInstance();
+            default: // Home Fragment
+                return HomeFragment.getInstance();
+        }
     }
 
     @Override
@@ -110,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.profile_setting:
@@ -133,6 +151,23 @@ public class MainActivity extends AppCompatActivity {
                         }).setNegativeButton("No", null).show();
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            if (getSupportFragmentManager().findFragmentByTag("HomeFragment") == null)
+            {
+                toolbar.setVisibility(View.GONE);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_layout_container, getFragment("HomeFragment"), "HomeFragment")
+                        .commit();
+            } else {
+                super.onBackPressed();
+            }
+        } else {
+            getSupportFragmentManager().popBackStack();
         }
     }
 }
