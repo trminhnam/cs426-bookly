@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,16 +77,16 @@ public class AddPostFragment extends Fragment {
 
     private static final int UPLOAD_IMAGE_INTENT_CODE = 10;
 
-    // gps
-    private double cur_lat = 0.0, cur_lng = 0.0;
+    // gps location
     List<Address> addresses;
-    private String address="unknown", city="unknown", state="unknown", country="unknown";
-    private LocationManager locationManager;
-    // permission arrays
-    private String[] locationPermissions;
-    // permission constants
-    private static final int LOCATION_REQUEST_CODE = 100;
     DetectLocation detectLocation = null;
+    private LocationManager locationManager;
+    private double cur_lat = 0.0, cur_lng = 0.0;
+    private String address="unknown", city="unknown", state="unknown", country="unknown";
+    // gps permission arrays
+    private String[] locationPermissions;
+    // gps permission constants
+    private static final int LOCATION_REQUEST_CODE = 100;
 
     public AddPostFragment() {
         // Required empty public constructor
@@ -135,23 +134,37 @@ public class AddPostFragment extends Fragment {
         locationTv = view.findViewById(R.id.locationTv);
 
         // add button on edit text
-        postContentEt.showBottomRightIcon();
+        postContentEt.setBottomRightIcon(R.drawable.ic_baseline_add_location_24);
 
         // set on click listener button add gps
         postContentEt.setIconClickListener(new PostEditText.IconClickListener() {
             @Override
             public void onClick() {
-                locationTv.setVisibility(View.VISIBLE);
                 if (detectLocation==null) {
                     detectLocation = new DetectLocation();
+                    detectLocation.detectLocation();
+                    locationTv.setVisibility(View.VISIBLE);
+                    postContentEt.setBottomRightIcon(R.drawable.ic_baseline_location_off_24);
                 }
-                detectLocation.detectLocation();
+                else
+                    if (detectLocation.isFinishing()){
+                        postContentEt.setBottomRightIcon(R.drawable.ic_baseline_location_off_24);
+                        locationTv.setVisibility(View.VISIBLE);
+                        detectLocation = new DetectLocation();
+                        detectLocation.detectLocation();
+                    } else {
+                        postContentEt.setBottomRightIcon(R.drawable.ic_baseline_add_location_24);
+                        locationTv.setVisibility(View.GONE);
+                        detectLocation.stop();
+                        cur_lat = 0.0; cur_lng = 0.0;
+                        address="unknown"; city="unknown"; state="unknown"; country="unknown";
+                    }
             }
         });
 
         // get current user profile image, name and about information from firebase
         database.getReference().child("Users")
-                .child(auth.getCurrentUser().getUid())
+                .child(Objects.requireNonNull(auth.getCurrentUser()).getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -182,7 +195,7 @@ public class AddPostFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String content = postContentEt.getText().toString();
+                String content = Objects.requireNonNull(postContentEt.getText()).toString();
                 if (!content.isEmpty()){
                     enablePostButton();
                 } else {
@@ -301,7 +314,7 @@ public class AddPostFragment extends Fragment {
                 else {
                     // add new post without image
                     Post post = new Post();
-                    String content = postContentEt.getText().toString();
+                    String content = Objects.requireNonNull(postContentEt.getText()).toString();
                     content = normalizerText(content);
 
                     post.setPostImage("");
@@ -321,7 +334,7 @@ public class AddPostFragment extends Fragment {
                     Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
 
                     if (Objects.equals(analysisText.getLabel(), "NEGATIVE")){
-                        // TODO:
+                        // TODO: popup dialog to ask user to confirm to post this post
                     }
 
                     database.getReference().child("Posts")
@@ -398,13 +411,33 @@ public class AddPostFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (detectLocation != null)
+            detectLocation.stop();
+    }
+
     // class for getting location of user
     class DetectLocation extends AppCompatActivity implements LocationListener {
 
         private boolean isRunning = true;
 
+        @Override
+        public void onResume() {
+            super.onResume();
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            locationManager.removeUpdates(this);
+        }
+
         public void stop() {
             isRunning = false;
+            finish();
+            locationManager.removeUpdates(this);
         }
 
         public void start() {

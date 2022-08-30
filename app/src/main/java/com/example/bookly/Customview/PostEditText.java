@@ -37,12 +37,12 @@ public class PostEditText extends AppCompatEditText {
     }
 
     public void showBottomRightIcon() {
-        mDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_add_circle_24);
+        mDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_add_location_24);
         setIcon();
     }
 
-    public void setBottomRightIcon(Drawable drawable) {
-        mDrawable = drawable;
+    public void setBottomRightIcon(int icon_id) {
+        mDrawable = ContextCompat.getDrawable(getContext(), icon_id);
         setIcon();
     }
 
@@ -53,8 +53,6 @@ public class PostEditText extends AppCompatEditText {
     private void setIcon() {
         Drawable[] drawables = getCompoundDrawables();
         setCompoundDrawablesWithIntrinsicBounds(drawables[0], drawables[1], mDrawable, drawables[3]);
-//        setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//        setSelection(Objects.requireNonNull(getText()).length());
     }
 
     @SuppressLint("ClickableViewAccessibility")
