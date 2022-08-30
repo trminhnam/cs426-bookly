@@ -44,7 +44,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
     FirebaseDatabase database;
     FirebaseStorage storage;
 
-
     public PostAdapter(ArrayList<Post> dashboardList, Context context) {
         this.dashboardList = dashboardList;
         this.context = context;
@@ -67,10 +66,16 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         Post model = dashboardList.get(position);
 
-        Picasso.get()
-                .load(model.getPostImage())
-                .placeholder(R.drawable.placeholder)
-                .into(holder.postImageIv);
+        if (model.getPostImage().equals("")) {
+            holder.postImageIv.setVisibility(View.GONE);
+        } else {
+            holder.postImageIv.setVisibility(View.VISIBLE);
+            Picasso.get()
+                    .load(model.getPostImage())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.postImageIv);
+        }
+
         holder.likeTv.setText(model.getPostLike() + "");
         holder.commentTv.setText(model.getCommentCount() + "");
         String content = model.getPostContent();
@@ -95,7 +100,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                                 .into(holder.profileIv);
                         holder.nameTv.setText(user.getName());
                         holder.aboutTv.setText(user.getAddress());
-
                     }
 
                     @Override
@@ -115,21 +119,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                         if (snapshot.exists()){
                             holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
                         } else {
-//                            holder.likeTv.setOnClickListener(v ->
-//                                    database.getReference()
-//                                    .child("Posts")
-//                                    .child(model.getPostID())
-//                                    .child("likes")
-//                                    .child(Objects.requireNonNull(auth.getUid()))
-//                                    .setValue(true)
-//                                    .addOnSuccessListener(unused -> database.getReference()
-//                                            .child("Posts")
-//                                            .child(model.getPostID())
-//                                            .child("postLike")
-//                                            .setValue(model.getPostLike() + 1) // increase likes
-//                                            .addOnSuccessListener(unused1 ->
-//                                                    holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0)))
-//                                    );
                             holder.likeTv.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -164,8 +153,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                                                                             .child(model.getPostedBy())
                                                                             .push()
                                                                             .setValue(notification);
-
-
                                                                 }
                                                             });
                                                 }
@@ -178,7 +165,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                                             });
                                 }
                             });
-
                         }
                     }
 
@@ -195,17 +181,6 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
-
-
-//        holder.profile.setImageResource(model.getProfile());
-//        holder.postImage.setImageResource(model.getPostImage());
-//        holder.save.setImageResource(model.getSave());
-//        holder.name.setText(model.getName());
-//        holder.about.setText(model.getAbout());
-//        holder.like.setText(model.getLike());
-//        holder.comment.setText(model.getComment());
-//        holder.share.setText(model.getShare());
-
     }
 
     @Override
