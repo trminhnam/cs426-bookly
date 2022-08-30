@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.example.bookly.API.SentimentAnalysis;
 import com.example.bookly.Model.SentimentModel;
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText emailEditText, passwordEditText;
     private Button loginButton;
     private TextView registerTextView;
+    private AppCompatCheckBox rememberCheckBox;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
@@ -79,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         registerTextView = findViewById(R.id.registerTextView);
+        rememberCheckBox = findViewById(R.id.rememberCb);
 
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,7 +257,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (currentUser != null){
+        if (currentUser != null && rememberCheckBox.isChecked()){
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }
