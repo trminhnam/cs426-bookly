@@ -19,6 +19,7 @@ import com.example.bookly.Model.Comment;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
+import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +54,7 @@ public class CommentActivity extends AppCompatActivity {
     TextView commentEt;
     TextView commentCountTv;
     Toolbar toolbar;
+    TextView timeAgoTv;
 
     // Comment recycler view
     RecyclerView commentRv;
@@ -81,6 +83,7 @@ public class CommentActivity extends AppCompatActivity {
         commentEt = findViewById(R.id.commentEt);
         commentCountTv = findViewById(R.id.comment);
         toolbar = findViewById(R.id.toolbar2);
+        timeAgoTv = findViewById(R.id.timeAgoTv);
 
         setSupportActionBar(toolbar);
         CommentActivity.this.setTitle("Comments");
@@ -114,6 +117,7 @@ public class CommentActivity extends AppCompatActivity {
                         postContentTv.setText(post.getPostContent());
                         postLikeTv.setText(post.getPostLike() + "");
                         commentCountTv.setText(post.getCommentCount() + "");
+                        timeAgoTv.setText(TimeAgo.using(post.getPostedAt()));
                     }
 
                     @Override
