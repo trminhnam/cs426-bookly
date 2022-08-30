@@ -1,8 +1,11 @@
 package com.example.bookly.Fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.ImageButton;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +26,7 @@ import com.example.bookly.Model.Post;
 import com.example.bookly.Model.StoryModel;
 import com.example.bookly.Model.UserStory;
 import com.example.bookly.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +43,8 @@ import java.util.Date;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
+    @SuppressLint("StaticFieldLeak")
+    private static HomeFragment instance;
 
     RecyclerView storyRv;
     ShimmerRecyclerView dashboardRv;
@@ -52,7 +59,16 @@ public class HomeFragment extends Fragment {
     ProgressDialog dialog;
 
     ImageButton addStoryImage;
+    FloatingActionButton fab;
+    NestedScrollView nestedScrollView;
     ActivityResultLauncher<String> galleryLauncher;
+
+    public static HomeFragment getInstance() {
+        if (instance == null) {
+            instance = new HomeFragment();
+        }
+        return instance;
+    }
 
     public HomeFragment() {
         // Required empty public constructor
@@ -74,6 +90,11 @@ public class HomeFragment extends Fragment {
         storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
 
         dialog = new ProgressDialog(getContext());
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -172,6 +193,34 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
+        fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nestedScrollView.smoothScrollTo(0,0, 250);
+                fab.setVisibility(View.GONE);
+            }
+        });
+        nestedScrollView = view.findViewById(R.id.homeNsv);
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                int scrollOffset = scrollY - oldScrollY;
+                Log.d("nest scroll", "onScrollChange: " + scrollOffset);
+                if (scrollOffset > 0) { // scrolling down
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            fab.setVisibility(View.GONE);
+//                        }
+//                    }, 2000); // delay of 2 seconds before hiding the fab
+                    fab.setVisibility(View.GONE);
+                } else if (scrollOffset < 0) { // scrolling up
+                    fab.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         // Add dashboard recycle view
         dashboardRv = view.findViewById(R.id.dashboardRv);
         dashboardRv.showShimmerAdapter();

@@ -35,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class ProfileFragment extends Fragment {
+    private static ProfileFragment instance;
 
     // firebase
     FirebaseAuth auth;
@@ -52,6 +53,13 @@ public class ProfileFragment extends Fragment {
 
     // user statistics
     TextView numFollowersTv;
+
+    public static ProfileFragment getInstance() {
+        if (instance == null) {
+            instance = new ProfileFragment();
+        }
+        return instance;
+    }
 
     public ProfileFragment() {
         // Required empty public constructor
