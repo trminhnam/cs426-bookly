@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -25,7 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookly.CommentActivity;
-import com.example.bookly.MainActivity;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
@@ -38,7 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.makeramen.roundedimageview.RoundedDrawable;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -212,10 +209,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0){
+                        if (which == 0) {
                             shareText(holder, model);
-                        }
-                        else if (which == 1){
+                        } else if (which == 1) {
                             shareImage(holder, model);
                         }
                     }
@@ -230,10 +226,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
         // add image
         if (!post.getPostImage().equals("")) {
-            Drawable mDrawable = holder.postImageIv.getDrawable();
-//            Bitmap mBitmap = ((BitmapDrawable) mDrawable).getBitmap();
-            Bitmap mBitmap = RoundedDrawable.drawableToBitmap(mDrawable);
-
             Glide.with(context).asBitmap().load(post.getPostImage()).into(new CustomTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -248,18 +240,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
                 }
             });
-
-
-//            String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), mBitmap, "Image Description", null);
-//            Uri uri = Uri.parse(path);
-//
-//            intent.putExtra(Intent.EXTRA_STREAM, uri);
-//
-////            Uri uri = Uri.parse(post.getPostImage());
-////            intent.putExtra(Intent.EXTRA_STREAM, uri);
-////            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//
-//            context.startActivity(Intent.createChooser(intent, "Share image via..."));
         } else {
             Toast.makeText(context, "No image to share", Toast.LENGTH_SHORT).show();
         }
