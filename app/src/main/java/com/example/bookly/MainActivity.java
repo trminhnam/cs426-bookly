@@ -1,5 +1,6 @@
 package com.example.bookly;
 
+import android.content.DialogInterface;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -140,10 +143,18 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("remember", "false");
                 editor.apply();
 
-                auth.signOut();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                new AlertDialog.Builder(MainActivity.this).setIcon(R.drawable.ic_logout_black)
+                        .setTitle("Logging out").setMessage("Are you sure you want to logging out?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                auth.signOut();
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                                Toast.makeText(MainActivity.this, "Logged out",Toast.LENGTH_SHORT).show();
+                            }
+                        }).setNegativeButton("No", null).show();
             default:
                 return super.onOptionsItemSelected(item);
         }

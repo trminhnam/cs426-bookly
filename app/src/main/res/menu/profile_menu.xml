@@ -4,7 +4,8 @@
 
     <item android:title="title"
         android:id="@+id/profile_setting"
-        android:icon="@drawable/ic_outline_settings_24"
+        android:icon="@drawable/ic_exit_logout"
         app:showAsAction="always"
         />
+
 </menu>

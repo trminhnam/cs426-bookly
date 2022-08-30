@@ -12,9 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="?attr/colorPrimary"
+        android:background="@color/white"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme" />
+        android:theme="?attr/actionBarTheme"
+        app:titleTextColor="@color/black"
+        app:titleMarginStart="16dp"/>
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -48,22 +50,31 @@
                 app:layout_constraintStart_toStartOf="@+id/profile_image"
                 app:layout_constraintTop_toTopOf="@+id/profile_image" />
 
-            <TextView
-                android:id="@+id/name"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:background="@drawable/right_round_bg"
-                android:paddingStart="12dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="3dp"
-                android:text="Penguins"
-                android:layout_margin="8dp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-                app:layout_constraintStart_toEndOf="@+id/view4"
-                app:layout_constraintTop_toTopOf="@+id/profile_image" />
+                app:layout_constraintStart_toEndOf="@+id/profile_image"
+                app:layout_constraintTop_toTopOf="@+id/profile_image"
+                android:orientation="vertical"
+                android:layout_margin="4dp">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/right_round_bg"
+                    android:text="Penguins"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/timeAgoTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Time Ago"/>
+
+            </LinearLayout>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
@@ -91,6 +102,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
             <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
@@ -168,9 +180,7 @@
         android:id="@+id/view5"
         android:layout_width="0dp"
         android:layout_height="80dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:background="@drawable/comment_view_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -179,12 +189,15 @@
     <EditText
         android:id="@+id/commentEt"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/comment_bg"
         android:layout_marginStart="8dp"
         android:ems="10"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp"
         android:hint="Write your thought..."
         android:inputType="textMultiLine|textPersonName"
-        android:maxLines="5"
+        android:maxLines="4"
         android:minLines="1"
         android:singleLine="false"
         app:layout_constraintBottom_toBottomOf="@+id/view5"
