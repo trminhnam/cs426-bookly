@@ -58,11 +58,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         Notification notification = notificationList.get(position);
 
-
-//        holder.profileIv.setImageResource(notification.getProfile());
-//        holder.notificationTv.setText(notification.getNotification());
-//        holder.timeTv.setText(notification.getTime());
-
         String type = notification.getType();
         holder.timeTv.setText(TimeAgo.using(notification.getNotificationAt()));
 
@@ -77,12 +72,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                 .load(user.getProfileImage())
                                 .placeholder(R.drawable.placeholder)
                                 .into(holder.profileIv);
-                        if (type.equals("Like")){
-                            holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> liked your post"));
-                        } else if (type.equals("Comment")){
-                            holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> commented on your post"));
-                        } else if (type.equals("Follow")) {
-                            holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> followed you"));
+                        switch (type) {
+                            case "Like":
+                                holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> liked your post"));
+                                break;
+                            case "Comment":
+                                holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> commented on your post"));
+                                break;
+                            case "Follow":
+                                holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> followed you"));
+                                break;
                         }
                     }
 
@@ -91,7 +90,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
                     }
                 });
-
     }
 
     @Override
