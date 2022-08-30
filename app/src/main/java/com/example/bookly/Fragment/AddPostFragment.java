@@ -1,8 +1,19 @@
 package com.example.bookly.Fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,11 +29,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.bookly.API.SentimentAnalysis;
+import com.example.bookly.Customview.PostEditText;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.SentimentModel;
 import com.example.bookly.Model.User;
@@ -40,17 +54,19 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class AddPostFragment extends Fragment {
 
-    EditText postContentEt;
+    PostEditText postContentEt;
     AppCompatButton postBtn;
     ImageView uploadImageIv, postImageIv;
     Uri uri;
 
     ImageView profileImageIv;
-    TextView nameTv, aboutTv;
+    TextView nameTv, aboutTv, locationTv;
 
     // Firebase
     FirebaseAuth auth;
@@ -61,6 +77,17 @@ public class AddPostFragment extends Fragment {
     ProgressDialog progressDialog;
 
     private static final int UPLOAD_IMAGE_INTENT_CODE = 10;
+
+    // gps
+    private double cur_lat = 0.0, cur_lng = 0.0;
+    List<Address> addresses;
+    private String address="unknown", city="unknown", state="unknown", country="unknown";
+    private LocationManager locationManager;
+    // permission arrays
+    private String[] locationPermissions;
+    // permission constants
+    private static final int LOCATION_REQUEST_CODE = 100;
+    DetectLocation detectLocation = null;
 
     public AddPostFragment() {
         // Required empty public constructor
@@ -88,6 +115,9 @@ public class AddPostFragment extends Fragment {
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
+
+        // initialize permission arrays
+        locationPermissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
     }
 
     @Override
@@ -102,6 +132,22 @@ public class AddPostFragment extends Fragment {
         profileImageIv = view.findViewById(R.id.profile_image);
         nameTv = view.findViewById(R.id.nameTv);
         aboutTv = view.findViewById(R.id.aboutTv);
+        locationTv = view.findViewById(R.id.locationTv);
+
+        // add button on edit text
+        postContentEt.showBottomRightIcon();
+
+        // set on click listener button add gps
+        postContentEt.setIconClickListener(new PostEditText.IconClickListener() {
+            @Override
+            public void onClick() {
+                locationTv.setVisibility(View.VISIBLE);
+                if (detectLocation==null) {
+                    detectLocation = new DetectLocation();
+                }
+                detectLocation.detectLocation();
+            }
+        });
 
         // get current user profile image, name and about information from firebase
         database.getReference().child("Users")
@@ -174,6 +220,11 @@ public class AddPostFragment extends Fragment {
                 final StorageReference storageReference = storage.getReference().child("Posts")
                         .child(auth.getCurrentUser().getUid()).child(new Date().getTime()+"");
 
+                // destroy detect location object
+                if (detectLocation!=null) {
+                    detectLocation.stop();
+                }
+
                 progressDialog.setTitle("Uploading post. Please wait...");
                 progressDialog.show();
 
@@ -185,13 +236,22 @@ public class AddPostFragment extends Fragment {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         Post post = new Post();
-                                        String content = postContentEt.getText().toString();
+                                        String content = Objects.requireNonNull(postContentEt.getText()).toString();
                                         content = normalizerText(content);
 
+                                        // set post content and image url
                                         post.setPostImage(uri.toString());
                                         post.setPostedBy(auth.getCurrentUser().getUid());
                                         post.setPostContent(content);
                                         post.setPostedAt(new Date().getTime());
+
+                                        // set post
+                                        post.setLocation(cur_lat, cur_lng);
+                                        post.setAddress(address);
+                                        post.setCity(city);
+                                        post.setState(state);
+                                        post.setCountry(country);
+
                                         // analysis text
                                         SentimentModel analysisText = new SentimentAnalysis().predict(content);
                                         Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
@@ -262,14 +322,129 @@ public class AddPostFragment extends Fragment {
     }
 
     private void enablePostButton() {
-        postBtn.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.post_btn_bg));
-        postBtn.setTextColor(getContext().getResources().getColor(R.color.white));
+        postBtn.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.post_btn_bg));
+        postBtn.setTextColor(requireContext().getResources().getColor(R.color.white));
         postBtn.setEnabled(true);
     }
 
     private void disablePostButton() {
-        postBtn.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.post_active_btn));
-        postBtn.setTextColor(getContext().getResources().getColor(R.color.gray));
+        postBtn.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.post_active_btn));
+        postBtn.setTextColor(requireContext().getResources().getColor(R.color.gray));
         postBtn.setEnabled(false);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void findAddress(double lat, double lng) {
+        Geocoder geocoder;
+        geocoder = new Geocoder(requireActivity(), Locale.getDefault());
+        try {
+            addresses = geocoder.getFromLocation(lat, lng, 1);
+//            address = addresses.get(0).getAddressLine(0); // dose not work for vietnam
+//            city = addresses.get(0).getLocality();    // dose not work for vietnam
+            state = addresses.get(0).getAdminArea();
+            country = addresses.get(0).getCountryName();
+
+            locationTv.setText(state + ", " + country);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    // class for getting location of user
+    class DetectLocation extends AppCompatActivity implements LocationListener {
+
+        private boolean isRunning = true;
+
+        public void stop() {
+            isRunning = false;
+        }
+
+        public void start() {
+            isRunning = true;
+        }
+
+        public DetectLocation() {
+            start();
+            if (checkLocationPermission()) {
+                // already allowed
+                detectLocation();
+            } else {
+                requestLocationPermission();
+            }
+        }
+
+        // Check location permission
+        private boolean checkLocationPermission() {
+            return ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED);
+        }
+
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+            if (requestCode == LOCATION_REQUEST_CODE) {
+                if (grantResults.length > 0) {
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (locationAccepted) {
+                        detectLocation();
+                    } else {
+                        Toast.makeText(getContext(), "Location permission is required ...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            LocationListener.super.onProviderEnabled(provider);
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+        LocationListener.super.onProviderDisabled(provider);
+            Toast.makeText(getContext(), "Please turn on location...", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            cur_lat = location.getLatitude();
+            cur_lng = location.getLongitude();
+
+            Log.d("REGISTER_LOCATION", "Latitude = " + cur_lat);
+            Log.d("REGISTER_LOCATION", "Longitude = " + cur_lng);
+
+            if (isRunning)
+                findAddress(cur_lat, cur_lng);
+        }
+
+        private void detectLocation() {
+//            Toast.makeText(getContext(), "Please wait...", Toast.LENGTH_SHORT).show();
+
+            locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+
+            if (ActivityCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                requestLocationPermission();
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+            Criteria criteria = new Criteria();
+            String provider = locationManager.getBestProvider(criteria, false);
+            Location location = locationManager.getLastKnownLocation(provider);
+
+            if (location != null) {
+                onLocationChanged(location);
+            }
+        }
+
+        private void requestLocationPermission() {
+            ActivityCompat.requestPermissions((Activity) requireContext(), locationPermissions, LOCATION_REQUEST_CODE);
+        }
     }
 }
