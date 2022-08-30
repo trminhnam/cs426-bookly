@@ -26,6 +26,12 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
+    private final static String HomeFragment_TAG = "HomeFragment";
+    private final static String AddPostFragment_TAG = "AddPostFragment";
+    private final static String NotificationFragment_TAG = "NotificationFragment";
+    private final static String ProfileFragment_TAG = "ProfileFragment";
+    private final static String SearchFragment_TAG = "SearchFragment";
+
     // save all the fragments in this array
     private static Fragment fragment;
     private static BottomNavigationView navigation;
@@ -50,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         // set default fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        fragment = getFragment("Home Fragment");
-        transaction.replace(R.id.frame_layout_container, fragment, "Home Fragment");
+        fragment = getFragment(HomeFragment_TAG);
+        transaction.replace(R.id.frame_layout_container, fragment, HomeFragment_TAG);
         transaction.commit();
 
 
@@ -66,22 +72,22 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, getFragment("HomeFragment"), "HomeFragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment(HomeFragment_TAG), HomeFragment_TAG);
                         transaction.commit();
                         return true;
                     case R.id.navigation_notification:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, getFragment("NotificationFragment"), "NotificationFragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment(NotificationFragment_TAG), NotificationFragment_TAG);
                         transaction.commit();
                         return true;
                     case R.id.navigation_search:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, getFragment("SearchFragment"), "SearchFragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment(SearchFragment_TAG), SearchFragment_TAG);
                         transaction.commit();
                         return true;
                     case R.id.navigation_profile:
                         toolbar.setVisibility(View.VISIBLE);
-                        transaction.replace(R.id.frame_layout_container, getFragment("ProfileFragment"), "ProfileFragment");
+                        transaction.replace(R.id.frame_layout_container, getFragment(ProfileFragment_TAG), ProfileFragment_TAG);
                         transaction.commit();
                         return true;
                 }
@@ -96,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 toolbar.setVisibility(View.GONE);
-                transaction.replace(R.id.frame_layout_container, getFragment("AddPostFragment"), "AddPostFragment");
+                transaction.replace(R.id.frame_layout_container, getFragment(AddPostFragment_TAG), AddPostFragment_TAG);
 //                        navigation.setVisibility(View.GONE);
                 transaction.commit();
             }
@@ -105,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment getFragment(String fragmentName) {
         switch (fragmentName) {
-            case "NotificationFragment":
+            case NotificationFragment_TAG:
                 return NotificationFragment.getInstance();
-            case "SearchFragment":
+            case SearchFragment_TAG:
                 return SearchFragment.getInstance();
-            case "ProfileFragment":
+            case ProfileFragment_TAG:
                 return ProfileFragment.getInstance();
-            case "AddPostFragment":
+            case AddPostFragment_TAG:
                 return AddPostFragment.getInstance();
             default: // Home Fragment
                 return HomeFragment.getInstance();
@@ -146,11 +152,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            if (getSupportFragmentManager().findFragmentByTag("HomeFragment") == null)
+            if (getSupportFragmentManager().findFragmentByTag(HomeFragment_TAG) == null)
             {
                 toolbar.setVisibility(View.GONE);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_layout_container, getFragment("HomeFragment"), "HomeFragment")
+                        .replace(R.id.frame_layout_container, getFragment(HomeFragment_TAG), HomeFragment_TAG)
                         .commit();
             } else {
                 super.onBackPressed();
