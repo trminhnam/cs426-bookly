@@ -91,43 +91,61 @@
                 app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
             <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="16dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="@id/description"
-                app:layout_constraintTop_toBottomOf="@id/description">
+                app:layout_constraintTop_toBottomOf="@id/description"
+                >
 
                 <TextView
                     android:id="@+id/like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/reaction_dashboard_bg"
+                    android:elevation="1dp"
                     android:layout_marginEnd="16dp"
-                    android:drawablePadding="6dp"
+                    android:paddingStart="20dip"
+                    android:paddingEnd="18dip"
                     android:gravity="center"
+                    android:layout_gravity="center_vertical"
                     android:text="123"
-                    app:drawableLeftCompat="@drawable/ic_heart_svgrepo_com" />
+                    android:textColor="@color/black"
+                    app:drawableLeftCompat="@drawable/ic_heart_icon" />
 
                 <TextView
                     android:id="@+id/comment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/reaction_dashboard_bg"
+                    android:elevation="1dp"
                     android:layout_marginEnd="16dp"
-                    android:drawablePadding="6dp"
+                    android:paddingStart="20dip"
+                    android:paddingEnd="18dip"
                     android:gravity="center"
                     android:text="456"
-                    app:drawableLeftCompat="@drawable/ic_baseline_comment_24" />
+                    android:textColor="@color/black"
+                    app:drawableLeftCompat="@drawable/ic_message_icon" />
 
                 <TextView
                     android:id="@+id/share"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="6dp"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/reaction_dashboard_bg"
+                    android:elevation="1dp"
+                    android:paddingStart="20dip"
+                    android:paddingEnd="18dip"
                     android:gravity="center"
                     android:text="789"
-                    app:drawableLeftCompat="@drawable/ic_baseline_share_24" />
+                    android:textColor="@color/black"
+                    app:drawableLeftCompat="@drawable/ic_share_icon" />
 
             </LinearLayout>
 
