@@ -186,7 +186,7 @@ public class AddPostFragment extends Fragment {
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             Post post = new Post();
-                                            String content = postContentEt.getText().toString();
+                                            String content = postContentEt.getText().toString().trim();
                                             content = normalizerText(content);
 
                                             post.setPostImage(uri.toString());
@@ -241,7 +241,7 @@ public class AddPostFragment extends Fragment {
                 else {
                     // add new post without image
                     Post post = new Post();
-                    String content = postContentEt.getText().toString();
+                    String content = postContentEt.getText().toString().trim();
                     content = normalizerText(content);
 
                     post.setPostImage("");

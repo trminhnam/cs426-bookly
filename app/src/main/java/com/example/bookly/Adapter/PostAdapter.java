@@ -3,6 +3,9 @@ package com.example.bookly.Adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Parcelable;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -174,12 +178,38 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                     }
                 });
 
-        holder.commentTv.setOnClickListener(v -> {
-            Intent intent = new Intent(context, CommentActivity.class);
-            intent.putExtra("postID", model.getPostID());
-            intent.putExtra("postedBy", model.getPostedBy());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+        holder.commentTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra("postID", model.getPostID());
+                intent.putExtra("postedBy", model.getPostedBy());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
+
+        holder.shareTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+
+                // add text
+                intent.putExtra(Intent.EXTRA_TEXT, model.getPostContent());
+
+                // add image
+                if (!model.getPostImage().equals("")){
+                    Uri uri = Uri.parse(model.getPostImage());
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    intent.setType("image/*");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+                else{
+                    intent.setType("text/plain");
+                }
+
+                context.startActivity(Intent.createChooser(intent, "Share via"));
+            }
         });
     }
 
