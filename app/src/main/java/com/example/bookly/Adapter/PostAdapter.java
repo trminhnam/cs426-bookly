@@ -86,7 +86,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.postContentTv.setText(content);
         }
 
-        if (!model.getCity().equals("unknown"))
+        if (!model.getState().equals("unknown"))
         {
             holder.locationTv.setVisibility(View.VISIBLE);
             holder.locationTv.setText(model.getState() + ", " + model.getCountry());
