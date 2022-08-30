@@ -1,6 +1,7 @@
 package com.example.bookly.Adapter;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -10,19 +11,38 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookly.Model.NotificationModel;
+import com.example.bookly.Model.Notification;
+import com.example.bookly.Model.User;
 import com.example.bookly.R;
+import com.github.marlonlom.utilities.timeago.TimeAgo;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.viewHolder> {
 
-    ArrayList<NotificationModel> notificationList;
+    ArrayList<Notification> notificationList;
     Context context;
 
-    public NotificationAdapter(ArrayList<NotificationModel> notificationList, Context context) {
+    // Firebase
+    FirebaseAuth auth;
+    FirebaseDatabase database;
+    FirebaseStorage storage;
+
+    public NotificationAdapter(ArrayList<Notification> notificationList, Context context) {
         this.notificationList = notificationList;
         this.context = context;
+
+        // Firebase
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
+        storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
     }
 
     @NonNull
@@ -36,11 +56,42 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-        NotificationModel notificationModel = notificationList.get(position);
+        Notification notification = notificationList.get(position);
 
-        holder.profileIv.setImageResource(notificationModel.getProfile());
-        holder.notificationTv.setText(notificationModel.getNotification());
-        holder.timeTv.setText(notificationModel.getTime());
+
+//        holder.profileIv.setImageResource(notification.getProfile());
+//        holder.notificationTv.setText(notification.getNotification());
+//        holder.timeTv.setText(notification.getTime());
+
+        String type = notification.getType();
+        holder.timeTv.setText(TimeAgo.using(notification.getNotificationAt()));
+
+        database.getReference()
+                .child("Users")
+                .child(notification.getNotificationBy())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        User user = snapshot.getValue(User.class);
+                        Picasso.get()
+                                .load(user.getProfileImage())
+                                .placeholder(R.drawable.placeholder)
+                                .into(holder.profileIv);
+                        if (type.equals("Like")){
+                            holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> liked your post"));
+                        } else if (type.equals("Comment")){
+                            holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> commented on your post"));
+                        } else if (type.equals("Follow")) {
+                            holder.notificationTv.setText(Html.fromHtml("<b>" + user.getName() + "</b> followed you"));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
     }
 
     @Override

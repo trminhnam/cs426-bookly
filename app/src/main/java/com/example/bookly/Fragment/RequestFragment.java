@@ -10,9 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.bookly.Adapter.NotificationAdapter;
 import com.example.bookly.Adapter.RequestAdapter;
-import com.example.bookly.Model.NotificationModel;
 import com.example.bookly.Model.RequestModel;
 import com.example.bookly.R;
 
