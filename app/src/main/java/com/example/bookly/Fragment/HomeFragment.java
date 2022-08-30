@@ -37,6 +37,8 @@ import com.google.firebase.storage.StorageReference;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
@@ -242,6 +244,14 @@ public class HomeFragment extends Fragment {
                             post.setPostID(dataSnapshot.getKey());
                             postList.add(post);
                         }
+
+                        Collections.sort(postList, new Comparator<Post>() {
+                            @Override
+                            public int compare(Post o1, Post o2) {
+                                return Long.compare(o2.getPostedAt(), o1.getPostedAt());
+                            }
+                        });
+
 
                         dashboardRv.setAdapter(postAdapter);
                         dashboardRv.hideShimmerAdapter();
