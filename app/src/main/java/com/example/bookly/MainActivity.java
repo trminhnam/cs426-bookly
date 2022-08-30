@@ -1,8 +1,8 @@
 package com.example.bookly;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set the listener for the bottom navigation bar
         navigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -64,22 +65,22 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new HomeFragment());
+                        transaction.replace(R.id.frame_layout_container, new HomeFragment(), "Home Fragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_notification:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new NotificationFragment());
+                        transaction.replace(R.id.frame_layout_container, new NotificationFragment(), "Notification Fragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_search:
                         toolbar.setVisibility(View.GONE);
-                        transaction.replace(R.id.frame_layout_container, new SearchFragment());
+                        transaction.replace(R.id.frame_layout_container, new SearchFragment(), "Search Fragment");
                         transaction.commit();
                         return true;
                     case R.id.navigation_profile:
                         toolbar.setVisibility(View.VISIBLE);
-                        transaction.replace(R.id.frame_layout_container, new ProfileFragment());
+                        transaction.replace(R.id.frame_layout_container, new ProfileFragment(), "Profile Fragment");
                         transaction.commit();
                         return true;
                 }
@@ -107,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.profile_setting:
@@ -122,6 +124,23 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            if (getSupportFragmentManager().findFragmentByTag("Home Fragment") == null)
+            {
+                toolbar.setVisibility(View.GONE);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_layout_container, new HomeFragment(), "Home Fragment")
+                        .commit();
+            } else {
+                super.onBackPressed();
+            }
+        } else {
+            getSupportFragmentManager().popBackStack();
         }
     }
 }
