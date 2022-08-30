@@ -2,10 +2,13 @@ package com.example.bookly.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Parcelable;
-import android.text.Html;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.bookly.CommentActivity;
+import com.example.bookly.MainActivity;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
@@ -29,16 +38,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.makeramen.roundedimageview.RoundedDrawable;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     ArrayList<Post> dashboardList;
     Context context;
@@ -83,7 +90,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
         holder.likeTv.setText(model.getPostLike() + "");
         holder.commentTv.setText(model.getCommentCount() + "");
         String content = model.getPostContent();
-        if (content.equals("")){
+        if (content.equals("")) {
             holder.postContentTv.setVisibility(View.GONE);
         } else {
             holder.postContentTv.setVisibility(View.VISIBLE);
@@ -120,7 +127,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()){
+                        if (snapshot.exists()) {
                             holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
                         } else {
                             holder.likeTv.setOnClickListener(new View.OnClickListener() {
@@ -192,25 +199,80 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
         holder.shareTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-
-                // add text
-                intent.putExtra(Intent.EXTRA_TEXT, model.getPostContent());
-
-                // add image
-                if (!model.getPostImage().equals("")){
-                    Uri uri = Uri.parse(model.getPostImage());
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setType("image/*");
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
-                else{
-                    intent.setType("text/plain");
-                }
-
-                context.startActivity(Intent.createChooser(intent, "Share via"));
+                showSharingDialog(holder, model);
             }
         });
+    }
+
+    private void showSharingDialog(@NonNull viewHolder holder, Post model) {
+        String[] options = {"Text", "Image", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Choose what to share ...")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0){
+                            shareText(holder, model);
+                        }
+                        else if (which == 1){
+                            shareImage(holder, model);
+                        }
+                    }
+                })
+                .show();
+    }
+
+    private void shareImage(viewHolder holder, Post post) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+//        intent.setType("image/*");
+        intent.setType("image/jpeg");
+
+        // add image
+        if (!post.getPostImage().equals("")) {
+            Drawable mDrawable = holder.postImageIv.getDrawable();
+//            Bitmap mBitmap = ((BitmapDrawable) mDrawable).getBitmap();
+            Bitmap mBitmap = RoundedDrawable.drawableToBitmap(mDrawable);
+
+            Glide.with(context).asBitmap().load(post.getPostImage()).into(new CustomTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), resource, "Image Description", null);
+                    Uri uri = Uri.parse(path);
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    context.startActivity(Intent.createChooser(intent, "Share image via..."));
+                }
+
+                @Override
+                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                }
+            });
+
+
+//            String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), mBitmap, "Image Description", null);
+//            Uri uri = Uri.parse(path);
+//
+//            intent.putExtra(Intent.EXTRA_STREAM, uri);
+//
+////            Uri uri = Uri.parse(post.getPostImage());
+////            intent.putExtra(Intent.EXTRA_STREAM, uri);
+////            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//
+//            context.startActivity(Intent.createChooser(intent, "Share image via..."));
+        } else {
+            Toast.makeText(context, "No image to share", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void shareText(viewHolder holder, Post post) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+
+        // add text
+        intent.putExtra(Intent.EXTRA_TEXT, holder.postContentTv.getText().toString().trim());
+
+        context.startActivity(Intent.createChooser(intent, "Share text via..."));
     }
 
     @Override
@@ -223,6 +285,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
         ImageView profileIv, postImageIv, saveIv;
         TextView nameTv, aboutTv, likeTv, commentTv, shareTv;
         TextView postContentTv;
+
         public viewHolder(@NonNull View itemView) {
             super(itemView);
 
