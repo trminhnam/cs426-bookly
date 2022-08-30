@@ -15,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/homeNsv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="8dp"
@@ -72,33 +73,53 @@
                 app:layout_constraintStart_toStartOf="@+id/appTextView"
                 app:layout_constraintTop_toBottomOf="@+id/appTextView" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/storyRecycleView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginTop="16dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/feedTv" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/storyRecycleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/feedTv" />
 
-                        <View
-                            android:id="@+id/view_bar_2"
-                            android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@color/transparent"
-                            app:layout_constraintEnd_toEndOf="@id/profile_image"
-                            app:layout_constraintStart_toStartOf="@+id/appTextView"
-                            app:layout_constraintTop_toBottomOf="@id/storyRecycleView" />
+            <View
+                android:id="@+id/view_bar_2"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="@id/profile_image"
+                app:layout_constraintStart_toStartOf="@+id/appTextView"
+                app:layout_constraintTop_toBottomOf="@id/storyRecycleView" />
 
-                        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
-                            android:id="@+id/dashboardRv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/view_bar_2" />
-
+            <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                android:id="@+id/dashboardRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_bar_2" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#80ffffff"
+        android:visibility="gone"
+        android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="#80ffffff" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
 </androidx.constraintlayout.widget.ConstraintLayout>
