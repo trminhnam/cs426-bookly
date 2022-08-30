@@ -192,8 +192,8 @@ public class HomeFragment extends Fragment {
                             assert post != null;
                             post.setPostID(dataSnapshot.getKey());
                             postList.add(post);
-
                         }
+
                         dashboardRv.setAdapter(postAdapter);
                         dashboardRv.hideShimmerAdapter();
                         postAdapter.notifyDataSetChanged();

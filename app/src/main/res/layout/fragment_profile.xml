@@ -36,9 +36,9 @@
 
                     <ImageView
                         android:id="@+id/dlivProfileFragment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="244dp"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/dog_cute" />
 
                     <View
