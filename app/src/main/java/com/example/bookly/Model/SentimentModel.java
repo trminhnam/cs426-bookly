@@ -13,6 +13,11 @@ public class SentimentModel {
         setResults(results);
     }
 
+    public SentimentModel(){
+        this.label = "POSITIVE";
+        this.score = 1.0;
+    }
+
     public List<PredictResultModel> getResults() {
         return results;
     }

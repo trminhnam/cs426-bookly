@@ -1,11 +1,13 @@
 package com.example.bookly.Fragment;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +22,9 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.bookly.API.SentimentAnalysis;
 import com.example.bookly.Model.Post;
+import com.example.bookly.Model.SentimentModel;
 import com.example.bookly.Model.User;
 import com.example.bookly.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +40,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class AddPostFragment extends Fragment {
 
@@ -106,6 +111,7 @@ public class AddPostFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             User user = snapshot.getValue(User.class);
+                            assert user != null;
                             Picasso.get()
                                     .load(user.getProfileImage())
                                     .placeholder(R.drawable.placeholder)
@@ -135,6 +141,12 @@ public class AddPostFragment extends Fragment {
                     enablePostButton();
                 } else {
                     disablePostButton();
+                }
+
+                // do not allow duplicated new lines
+                if (charSequence.length() > 3 && charSequence.charAt(charSequence.length()-1) == '\n' && charSequence.charAt(charSequence.length()-2) == '\n' && charSequence.charAt(charSequence.length()-3) == '\n'){
+                    postContentEt.setText(charSequence.subSequence(0, charSequence.length()-2));
+                    postContentEt.setSelection(charSequence.length()-2);
                 }
             }
 
@@ -173,10 +185,21 @@ public class AddPostFragment extends Fragment {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         Post post = new Post();
+                                        String content = postContentEt.getText().toString();
+                                        content = normalizerText(content);
+
                                         post.setPostImage(uri.toString());
                                         post.setPostedBy(auth.getCurrentUser().getUid());
-                                        post.setPostContent(postContentEt.getText().toString());
+                                        post.setPostContent(content);
                                         post.setPostedAt(new Date().getTime());
+                                        // analysis text
+                                        SentimentModel analysisText = new SentimentAnalysis().predict(content);
+                                        Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
+
+                                        if (Objects.equals(analysisText.getLabel(), "NEGATIVE")){
+                                            // TODO: 
+                                        }
+
                                         database.getReference().child("Posts")
                                                 .push().setValue(post)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -232,6 +255,10 @@ public class AddPostFragment extends Fragment {
 
             enablePostButton();
         }
+    }
+
+    private String normalizerText(String text){
+        return text.trim();
     }
 
     private void enablePostButton() {
