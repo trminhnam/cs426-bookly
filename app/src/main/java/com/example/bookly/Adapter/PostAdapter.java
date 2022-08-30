@@ -86,6 +86,12 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.postContentTv.setText(content);
         }
 
+        if (!model.getCity().equals("unknown"))
+        {
+            holder.locationTv.setVisibility(View.VISIBLE);
+            holder.locationTv.setText(model.getState() + ", " + model.getCountry());
+        }
+
         database.getReference()
                 .child("Users")
                 .child(model.getPostedBy())
@@ -191,7 +197,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
     public class viewHolder extends RecyclerView.ViewHolder {
 
         ImageView profileIv, postImageIv, saveIv;
-        TextView nameTv, aboutTv, likeTv, commentTv, shareTv;
+        TextView nameTv, aboutTv, likeTv, commentTv, shareTv, locationTv;
         TextView postContentTv;
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -205,7 +211,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
             commentTv = itemView.findViewById(R.id.comment);
             shareTv = itemView.findViewById(R.id.share);
             postContentTv = itemView.findViewById(R.id.postContentTv);
-
+            locationTv = itemView.findViewById(R.id.location);
         }
     }
 }

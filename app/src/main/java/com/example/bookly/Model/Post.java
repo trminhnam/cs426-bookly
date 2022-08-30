@@ -10,6 +10,9 @@ public class Post {
     private int postLike;
     private int commentCount;
 
+    private double cur_lat = 0.0, cur_lng = 0.0;
+    private String address="unknown", city="unknown", state="unknown", country="unknown";
+
     public Post(String postID, String postImage, String postedBy, String postContent, long postedAt) {
         this.postID = postID;
         this.postImage = postImage;
@@ -20,6 +23,59 @@ public class Post {
 
     public Post() {
 
+    }
+
+    public void setLocation(double lat, double lng) {
+        this.cur_lat = lat;
+        this.cur_lng = lng;
+    }
+
+    public double getLat() {
+        return cur_lat;
+    }
+
+    public void setLat(double lat) {
+        this.cur_lat = lat;
+    }
+
+    public double getLng() {
+        return cur_lng;
+    }
+
+    public void setLng(double lng) {
+        this.cur_lng = lng;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public String getPostID() {

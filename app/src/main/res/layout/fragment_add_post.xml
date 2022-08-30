@@ -88,11 +88,41 @@
         android:layout_height="wrap_content"
         android:text="10 seconds ago"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@id/profile_image"
+        app:layout_constraintBottom_toTopOf="@id/locationTv"
         app:layout_constraintStart_toStartOf="@+id/nameTv"
         app:layout_constraintTop_toBottomOf="@+id/nameTv" />
 
-    <EditText
+    <TextView
+        android:id="@+id/locationTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aerospace"
+        android:textColor="@color/gray"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/profile_image"
+        app:layout_constraintStart_toStartOf="@+id/nameTv"
+        app:layout_constraintTop_toBottomOf="@+id/aboutTv" />
+
+<!--    <EditText-->
+<!--        android:id="@+id/postContentEt"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_margin="4dp"-->
+<!--        android:background="@color/transparent"-->
+<!--        android:ems="10"-->
+<!--        android:gravity="top|left"-->
+<!--        android:hint="Comment something about your favourite book."-->
+<!--        android:inputType="textMultiLine"-->
+<!--        android:minHeight="48dp"-->
+<!--        android:minLines="4"-->
+<!--        android:scrollbarAlwaysDrawVerticalTrack="true"-->
+<!--        android:textSize="24sp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/postImageIv"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/profile_image" />-->
+
+    <com.example.bookly.Customview.PostEditText
         android:id="@+id/postContentEt"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -109,7 +139,8 @@
         app:layout_constraintBottom_toTopOf="@+id/postImageIv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
+        />
 
     <ImageView
         android:id="@+id/postImageIv"
