@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.example.bookly.API.SentimentAnalysis;
 import com.example.bookly.Model.SentimentModel;
@@ -44,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText emailEditText, passwordEditText;
     private Button loginButton;
     private TextView registerTextView;
+    private AppCompatCheckBox rememberCheckBox;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
@@ -79,12 +83,40 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         registerTextView = findViewById(R.id.registerTextView);
+        rememberCheckBox = findViewById(R.id.rememberCb);
+
+        SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
+        String checkbox = preferences.getString("remember", "");
+
+        if (checkbox.equals("true")){
+            rememberCheckBox.setChecked(true);
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        } else if (checkbox.equals("false")){
+            rememberCheckBox.setChecked(false);
+            // Do nothing
+        }
 
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
                 finish();
+            }
+        });
+
+        rememberCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                if (compoundButton.isChecked()){
+                    editor.putString("remember", "true");
+                    editor.apply();
+                } else if (!compoundButton.isChecked()){
+                    editor.putString("remember", "false");
+                    editor.apply();
+                }
             }
         });
 
@@ -251,14 +283,14 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (currentUser != null){
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if (currentUser != null){
+//            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+//            finish();
+//        }
+//    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
