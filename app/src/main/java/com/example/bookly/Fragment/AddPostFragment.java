@@ -3,6 +3,7 @@ package com.example.bookly.Fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -226,142 +228,145 @@ public class AddPostFragment extends Fragment {
         });
 
         // post content and add data to firebase when user click on post button
-        postBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final StorageReference storageReference = storage.getReference().child("Posts")
-                        .child(auth.getCurrentUser().getUid()).child(new Date().getTime()+"");
+        postBtn.setOnClickListener(v -> {
 
-                // destroy detect location object
-                if (detectLocation!=null) {
-                    detectLocation.stop();
-                }
+            // disable post button
+            disablePostButton();
 
-                progressDialog.setTitle("Uploading post. Please wait...");
-                progressDialog.show();
+            // destroy detect location object
+            if (detectLocation!=null) {
+                detectLocation.stop();
+            }
 
-                if (uri != null){
-                    storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            storageReference.getDownloadUrl()
-                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            Post post = new Post();
-                                            String content = postContentEt.getText().toString().trim();
-                                            content = normalizerText(content);
+            // hide keyboard
+            hideKeyboard(requireActivity());
 
-                                            // set post data
-                                            post.setPostImage(uri.toString());
-                                            post.setPostedBy(auth.getCurrentUser().getUid());
-                                            post.setPostContent(content);
-                                            post.setPostedAt(new Date().getTime());
+            String content = Objects.requireNonNull(postContentEt.getText()).toString().trim();
+            content = normalizerText(content);
 
-                                            // set post location
-                                            post.setLocation(cur_lat, cur_lng);
-                                            post.setAddress(address);
-                                            post.setCity(city);
-                                            post.setState(state);
-                                            post.setCountry(country);
+            // analysis text
+            SentimentModel analysisText = new SentimentAnalysis().predict(content);
+            // Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
 
-                                            // analysis text
-                                            SentimentModel analysisText = new SentimentAnalysis().predict(content);
-                                            Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
-
-                                            if (Objects.equals(analysisText.getLabel(), "NEGATIVE")){
-                                                // TODO:
-                                            }
-
-                                            database.getReference().child("Posts")
-                                                    .push().setValue(post)
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void unused) {
-                                                            disablePostButton();
-                                                            postContentEt.setText("");
-                                                            postImageIv.setVisibility(View.GONE);
-                                                            progressDialog.dismiss();
-                                                            Toast.makeText(getContext(), "Post added", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            progressDialog.dismiss();
-                                                            Toast.makeText(getContext(), "Failed to add post", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(getContext(), "Failed to get post image link", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
+            if (Objects.equals(analysisText.getLabel(), "NEGATIVE")){
+                String finalContent = content;
+                new AlertDialog.Builder(requireActivity()).setIcon(R.drawable.ic_baseline_sentiment_very_dissatisfied_24)
+                        .setTitle("Your content is negative")
+                        .setMessage("Do you want to continue posting?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            uploadPost(finalContent);
+                        })
+                        .setNegativeButton("No", (dialog, which)-> {
+                            dialog.dismiss();
+                        })
+                        .setNeutralButton("Cancel", (dialog, which)-> {
+                            // clean post content edit text
+                            postContentEt.setText("");
+                            postImageIv.setVisibility(View.GONE);
                             progressDialog.dismiss();
-                            Toast.makeText(getContext(), "Failed to upload post image", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                else {
-                    // add new post without image
-                    Post post = new Post();
+                            // back to home fragment
+                            requireActivity().onBackPressed();
+                        })
+                        .setOnDismissListener(DialogInterface::dismiss)
+                        .show();
+            }else{
+                uploadPost(content);
+            }
+        });
+        return view;
+    }
 
-                    String content = Objects.requireNonNull(postContentEt.getText()).toString();
-                    
-                    content = normalizerText(content);
+    public static void hideKeyboard(@NonNull Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
-                    post.setPostImage("");
-                    post.setPostedBy(auth.getCurrentUser().getUid());
-                    post.setPostContent(content);
-                    post.setPostedAt(new Date().getTime());
+    private void uploadPost(String content){
+        progressDialog.setTitle("Uploading post. Please wait...");
+        progressDialog.show();
+        final StorageReference storageReference = storage.getReference().child("Posts")
+                .child(Objects.requireNonNull(auth.getCurrentUser()).getUid()).child(new Date().getTime()+"");
+        if (uri != null){
+            storageReference.putFile(uri).addOnSuccessListener(taskSnapshot -> storageReference.getDownloadUrl()
+                    .addOnSuccessListener(uri -> {
+                        Post post = new Post();
 
-                    // set post location
-                    post.setLocation(cur_lat, cur_lng);
-                    post.setAddress(address);
-                    post.setCity(city);
-                    post.setState(state);
-                    post.setCountry(country);
+                        // set post data
+                        post.setPostImage(uri.toString());
+                        post.setPostedBy(auth.getCurrentUser().getUid());
+                        post.setPostContent(content);
+                        post.setPostedAt(new Date().getTime());
 
-                    // analysis text
-                    SentimentModel analysisText = new SentimentAnalysis().predict(content);
-                    Toast.makeText(getContext(), analysisText.getLabel(), Toast.LENGTH_SHORT).show();
+                        // set post location
+                        post.setLocation(cur_lat, cur_lng);
+                        post.setAddress(address);
+                        post.setCity(city);
+                        post.setState(state);
+                        post.setCountry(country);
 
-                    if (Objects.equals(analysisText.getLabel(), "NEGATIVE")){
-                        // TODO: popup dialog to ask user to confirm to post this post
-                    }
-
-                    database.getReference().child("Posts")
-                            .push().setValue(post)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
+                        database.getReference().child("Posts")
+                                .push().setValue(post)
+                                .addOnSuccessListener(unused -> {
                                     disablePostButton();
                                     postContentEt.setText("");
                                     postImageIv.setVisibility(View.GONE);
                                     progressDialog.dismiss();
                                     Toast.makeText(getContext(), "Post added", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
+                                })
+                                .addOnFailureListener(e -> {
                                     progressDialog.dismiss();
                                     Toast.makeText(getContext(), "Failed to add post", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-            }
-        });
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(getContext(), "Failed to get post image link", Toast.LENGTH_SHORT).show();
+                    })).addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(getContext(), "Failed to upload post image", Toast.LENGTH_SHORT).show();
+                    });
+        }
+        else {
+            // add new post without image
+            Post post = new Post();
+            post.setPostImage("");
+            post.setPostedBy(auth.getCurrentUser().getUid());
+            post.setPostContent(content);
+            post.setPostedAt(new Date().getTime());
 
-        return view;
+            // set post location
+            post.setLocation(cur_lat, cur_lng);
+            post.setAddress(address);
+            post.setCity(city);
+            post.setState(state);
+            post.setCountry(country);
+
+            database.getReference().child("Posts")
+                    .push().setValue(post)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            disablePostButton();
+                            postContentEt.setText("");
+                            postImageIv.setVisibility(View.GONE);
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Post added", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Failed to add post", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 
     @Override

@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -17,6 +19,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -101,7 +105,7 @@ public class CommentActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         CommentActivity.this.setTitle("Comments");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 
         // init Firebase
@@ -181,7 +185,7 @@ public class CommentActivity extends AppCompatActivity {
                                             .child("Posts")
                                             .child(postID)
                                             .child("likes")
-                                            .child(auth.getUid())
+                                            .child(Objects.requireNonNull(auth.getUid()))
                                             .setValue(true)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -232,79 +236,69 @@ public class CommentActivity extends AppCompatActivity {
                 });
 
         // add comment to firebase
-        commentPostButtonIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        commentPostButtonIv.setOnClickListener(v -> {
 
-                    Comment comment = new Comment();
-                    comment.setCommentBody(commentEt.getText().toString());
-                    comment.setCommentBy(auth.getCurrentUser().getUid());
-                    comment.setCommentAt(new Date().getTime());
+            // hide keyboard
+            hideKeyboard(CommentActivity.this);
 
-                    database.getReference()
+            Comment comment = new Comment();
+            comment.setCommentBody(commentEt.getText().toString());
+            comment.setCommentBy(auth.getCurrentUser().getUid());
+            comment.setCommentAt(new Date().getTime());
+
+            database.getReference()
+                    .child("Posts")
+                    .child(postID)
+                    .child("Comments")
+                    .push()
+                    .setValue(comment)
+                    .addOnSuccessListener(unused -> database.getReference()
                             .child("Posts")
                             .child(postID)
-                            .child("Comments")
-                            .push()
-                            .setValue(comment)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            .child("commentCount")
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onSuccess(Void unused) {
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    int commentCount = 0;
+                                    if (snapshot.exists()) {
+                                        commentCount = snapshot.getValue(Integer.class);
+                                    }
+
                                     database.getReference()
                                             .child("Posts")
                                             .child(postID)
                                             .child("commentCount")
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            .setValue(commentCount + 1)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    int commentCount = 0;
-                                                    if (snapshot.exists()) {
-                                                        commentCount = snapshot.getValue(Integer.class);
-                                                    }
+                                                public void onSuccess(Void unused) {
+                                                    commentEt.setText("");
+                                                    Toast.makeText(CommentActivity.this, "Comment Successfully", Toast.LENGTH_SHORT).show();
+
+                                                    Notification notification = new Notification();
+                                                    notification.setNotificationBy(auth.getUid());
+                                                    notification.setNotificationAt(new Date().getTime());
+                                                    notification.setPostID(postID);
+                                                    notification.setPostedBy(postedBy);
+                                                    notification.setType("Comment");
 
                                                     database.getReference()
-                                                            .child("Posts")
-                                                            .child(postID)
-                                                            .child("commentCount")
-                                                            .setValue(commentCount + 1)
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void unused) {
-                                                                    commentEt.setText("");
-                                                                    Toast.makeText(CommentActivity.this, "Comment Successfully", Toast.LENGTH_SHORT).show();
-
-                                                                    Notification notification = new Notification();
-                                                                    notification.setNotificationBy(auth.getUid());
-                                                                    notification.setNotificationAt(new Date().getTime());
-                                                                    notification.setPostID(postID);
-                                                                    notification.setPostedBy(postedBy);
-                                                                    notification.setType("Comment");
-
-                                                                    database.getReference()
-                                                                            .child("Notifications")
-                                                                            .child(postedBy)
-                                                                            .push()
-                                                                            .setValue(notification);
-                                                                }
-                                                            });
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-                                                    Toast.makeText(CommentActivity.this, "Comment Failed", Toast.LENGTH_SHORT).show();
+                                                            .child("Notifications")
+                                                            .child(postedBy)
+                                                            .push()
+                                                            .setValue(notification);
                                                 }
                                             });
-
                                 }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
+
                                 @Override
-                                public void onFailure(@NonNull Exception e) {
+                                public void onCancelled(@NonNull DatabaseError error) {
                                     Toast.makeText(CommentActivity.this, "Comment Failed", Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                }
-            });
+                            }))
+                    .addOnFailureListener(e ->
+                            Toast.makeText(CommentActivity.this, "Comment Failed", Toast.LENGTH_SHORT).show());
+        });
 
 
         // load comments from firebase
@@ -320,6 +314,7 @@ public class CommentActivity extends AppCompatActivity {
                 .child(postID)
                 .child("Comments")
                 .addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         commentList.clear();
@@ -403,6 +398,5 @@ public class CommentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-
 
 
