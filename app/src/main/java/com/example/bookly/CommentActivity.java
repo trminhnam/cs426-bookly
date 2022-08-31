@@ -1,20 +1,31 @@
 package com.example.bookly;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.bookly.Adapter.CommentAdapter;
+import com.example.bookly.Adapter.PostAdapter;
 import com.example.bookly.Model.Comment;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
@@ -55,6 +66,8 @@ public class CommentActivity extends AppCompatActivity {
     TextView commentCountTv;
     Toolbar toolbar;
     TextView timeAgoTv;
+    TextView shareTv;
+    Post post;
 
     // Comment recycler view
     RecyclerView commentRv;
@@ -84,6 +97,7 @@ public class CommentActivity extends AppCompatActivity {
         commentCountTv = findViewById(R.id.comment);
         toolbar = findViewById(R.id.toolbar2);
         timeAgoTv = findViewById(R.id.timeAgoTv);
+        shareTv = findViewById(R.id.share);
 
         setSupportActionBar(toolbar);
         CommentActivity.this.setTitle("Comments");
@@ -102,7 +116,7 @@ public class CommentActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Post post = snapshot.getValue(Post.class);
+                        post = snapshot.getValue(Post.class);
 
                         if (post.getPostImage().equals("")) {
                             postImageIv.setVisibility(View.GONE);
@@ -320,6 +334,65 @@ public class CommentActivity extends AppCompatActivity {
                     }
                 });
 
+        shareTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSharingDialog();
+            }
+        });
+    }
+
+    private void showSharingDialog() {
+        String[] options = {"Text", "Image", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose what to share ...")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            shareText();
+                        } else if (which == 1) {
+                            shareImage();
+                        }
+                    }
+                })
+                .show();
+    }
+
+    private void shareImage() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/jpeg");
+
+        // add image
+        if (!post.getPostImage().equals("")) {
+            Glide.with(this).asBitmap().load(post.getPostImage()).into(new CustomTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    String path = MediaStore.Images.Media.insertImage(getContentResolver(), resource, "Image Description", null);
+                    Uri uri = Uri.parse(path);
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    startActivity(Intent.createChooser(intent, "Share image via..."));
+                }
+
+                @Override
+                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                }
+            });
+        } else {
+            Toast.makeText(this, "No image to share", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void shareText() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+
+        // add text
+        intent.putExtra(Intent.EXTRA_TEXT, postContentTv.getText().toString().trim());
+
+        startActivity(Intent.createChooser(intent, "Share text via..."));
     }
 
     @Override
@@ -328,46 +401,6 @@ public class CommentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
