@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/addPostBtn"
             app:layout_anchor="@id/bottomAppBar"
-            android:src="@drawable/ic_add"
+            android:src="@drawable/ic_baseline_close_24"
             android:tint="@color/white"
             android:tintMode="add"
             android:backgroundTint="@color/black"
