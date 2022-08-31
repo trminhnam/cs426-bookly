@@ -12,7 +12,7 @@
         android:layout_height="70dp"
         android:outlineAmbientShadowColor="#BEBABA"
         android:outlineSpotShadowColor="#BEBABA"
-        android:src="@drawable/resource_default"
+        android:src="@drawable/cartoon_penguin_dressed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
