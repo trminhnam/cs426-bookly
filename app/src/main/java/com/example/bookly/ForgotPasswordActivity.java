@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
-    private TextInputEditText resetEmailEt, currentPasswordEt;
+    private TextInputEditText resetEmailEt;
     private Button resetBtn;
     private TextView backToLoginTv;
     ProgressBar progressBar;
@@ -33,7 +34,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forgot_password);
 
         resetEmailEt = (TextInputEditText) findViewById(R.id.resetEmailEt);
-        currentPasswordEt = (TextInputEditText) findViewById(R.id.currentPasswordEt);
         backToLoginTv = (TextView) findViewById(R.id.backLoginTv);
         
         resetBtn = (Button) findViewById(R.id.resetBtn);
@@ -60,17 +60,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private void resetPassword() {
         String email = resetEmailEt.getText().toString().trim();
-        String password = currentPasswordEt.getText().toString().trim();
+        Log.d("email", "resetPassword: " + email);
 
         if (email.isEmpty()){
             resetEmailEt.setError("Email is required!");
             resetEmailEt.requestFocus();
-            return;
-        }
-
-        if (password.isEmpty()){
-            currentPasswordEt.setError("Password is required!");
-            currentPasswordEt.requestFocus();
             return;
         }
 
