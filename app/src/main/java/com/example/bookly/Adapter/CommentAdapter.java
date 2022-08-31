@@ -66,7 +66,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.viewHold
 
                         Picasso.get()
                                 .load(user.getProfileImage())
-                                .placeholder(R.drawable.placeholder)
+                                .placeholder(R.drawable.cartoon_penguin_dressed)
                                 .into(holder.profileIv);
 
                         holder.userNameTv.setText(user.getName());

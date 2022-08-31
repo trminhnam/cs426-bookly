@@ -174,7 +174,7 @@ public class AddPostFragment extends Fragment {
                             assert user != null;
                             Picasso.get()
                                     .load(user.getProfileImage())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.cartoon_penguin_dressed)
                                     .into(profileImageIv);
                             nameTv.setText(user.getName());
                             aboutTv.setText(user.getAddress());

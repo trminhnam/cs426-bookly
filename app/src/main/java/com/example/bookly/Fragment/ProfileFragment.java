@@ -155,13 +155,13 @@ public class ProfileFragment extends Fragment {
                             assert user != null;
                             Picasso.get()
                                     .load(user.getCoverPhoto())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.ic_blank_image)
                                     .into(coverPhotoIv);
 
                             // get profile image
                             Picasso.get()
                                     .load(user.getProfileImage())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.cartoon_penguin_dressed)
                                     .into(profileImageIv);
 
                             // get list of follower profile images

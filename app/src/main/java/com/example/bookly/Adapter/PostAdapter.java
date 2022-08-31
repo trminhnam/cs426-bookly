@@ -84,7 +84,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
             holder.postImageIv.setVisibility(View.VISIBLE);
             Picasso.get()
                     .load(model.getPostImage())
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.drawable.ic_blank_image)
                     .into(holder.postImageIv);
         }
 
@@ -121,7 +121,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                         assert user != null;
                         Picasso.get()
                                 .load(user.getProfileImage())
-                                .placeholder(R.drawable.placeholder)
+                                .placeholder(R.drawable.cartoon_penguin_dressed)
                                 .into(holder.profileIv);
                         holder.nameTv.setText(user.getName());
 //                        holder.aboutTv.setText(user.get);
