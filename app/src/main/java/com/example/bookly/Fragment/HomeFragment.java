@@ -94,6 +94,7 @@ public class HomeFragment extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
+    @SuppressLint({"UseCompatLoadingForDrawables", "NotifyDataSetChanged"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,6 +116,12 @@ public class HomeFragment extends Fragment {
 
         storyList.add(new StoryModel());
 
+        StoryAdapter adapter = new StoryAdapter(storyList, getContext(), addStoryCallback);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        storyRv.setLayoutManager(linearLayoutManager);
+        storyRv.setNestedScrollingEnabled(true);
+        storyRv.setAdapter(adapter);
+
         galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 result -> {
                     if (result == null) {
@@ -129,32 +136,29 @@ public class HomeFragment extends Fragment {
                             .child(String.valueOf(new Date().getTime()));
                     reference.putFile(result).addOnSuccessListener(taskSnapshot -> reference.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-                        StoryModel story = new StoryModel();
-                        story.setStoryAt(new Date().getTime());
+                                StoryModel story = new StoryModel();
+                                story.setStoryAt(new Date().getTime());
 
-                        database.getReference()
-                                .child("stories")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child("postedBy")
-                                .setValue(story.getStoryAt())
-                                .addOnSuccessListener(unused -> {
-                                    UserStory userStory = new UserStory(uri.toString(), story.getStoryAt());
+                                database.getReference()
+                                        .child("stories")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child("postedBy")
+                                        .setValue(story.getStoryAt())
+                                        .addOnSuccessListener(unused -> {
+                                        UserStory userStory = new UserStory(uri.toString(), story.getStoryAt());
 
-                                    database.getReference()
-                                            .child(getString(R.string.child_stories))
-                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .child(getString(R.string.child_userStories))
-                                            .push()
-                                            .setValue(userStory).addOnSuccessListener(unused1 -> dialog.dismiss());
-                                });
-                        }));
-            });
+                                        database.getReference()
+                                                .child(getString(R.string.child_stories))
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child(getString(R.string.child_userStories))
+                                                .push()
+                                                .setValue(userStory).addOnSuccessListener(unused1 -> dialog.dismiss());
+                                        });
+                            }));
+                    storyList.set(0, new StoryModel());
+                    adapter.notifyItemChanged(0);
+                });
 
-        StoryAdapter adapter = new StoryAdapter(storyList, getContext(), addStoryCallback);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        storyRv.setLayoutManager(linearLayoutManager);
-        storyRv.setNestedScrollingEnabled(true);
-        storyRv.setAdapter(adapter);
 
         database.getReference()
                 .child(getString(R.string.child_stories)).addValueEventListener(new ValueEventListener() {
