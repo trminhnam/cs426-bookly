@@ -2,7 +2,12 @@ package com.example.bookly.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +16,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.bookly.CommentActivity;
 import com.example.bookly.MapsActivity;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
 import com.example.bookly.Model.User;
 import com.example.bookly.R;
+import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,13 +40,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
 
     ArrayList<Post> dashboardList;
     Context context;
@@ -67,6 +76,8 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         Post model = dashboardList.get(position);
 
+        holder.aboutTv.setText(TimeAgo.using(model.getPostedAt()));
+
         if (model.getPostImage().equals("")) {
             holder.postImageIv.setVisibility(View.GONE);
         } else {
@@ -80,7 +91,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
         holder.likeTv.setText(model.getPostLike() + "");
         holder.commentTv.setText(model.getCommentCount() + "");
         String content = model.getPostContent();
-        if (content.equals("")){
+        if (content.equals("")) {
             holder.postContentTv.setVisibility(View.GONE);
         } else {
             holder.postContentTv.setVisibility(View.VISIBLE);
@@ -113,7 +124,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                                 .placeholder(R.drawable.placeholder)
                                 .into(holder.profileIv);
                         holder.nameTv.setText(user.getName());
-                        holder.aboutTv.setText(user.getAddress());
+//                        holder.aboutTv.setText(user.get);
                     }
 
                     @Override
@@ -130,7 +141,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()){
+                        if (snapshot.exists()) {
                             holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
                         } else {
                             holder.likeTv.setOnClickListener(new View.OnClickListener() {
@@ -188,13 +199,77 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
                     }
                 });
 
-        holder.commentTv.setOnClickListener(v -> {
-            Intent intent = new Intent(context, CommentActivity.class);
-            intent.putExtra("postID", model.getPostID());
-            intent.putExtra("postedBy", model.getPostedBy());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+        holder.commentTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra("postID", model.getPostID());
+                intent.putExtra("postedBy", model.getPostedBy());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
         });
+
+        holder.shareTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSharingDialog(holder, model);
+            }
+        });
+    }
+
+    private void showSharingDialog(@NonNull viewHolder holder, Post model) {
+        String[] options = {"Text", "Image", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Choose what to share ...")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            shareText(holder, model);
+                        } else if (which == 1) {
+                            shareImage(holder, model);
+                        }
+                    }
+                })
+                .show();
+    }
+
+    private void shareImage(viewHolder holder, Post post) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+//        intent.setType("image/*");
+        intent.setType("image/jpeg");
+
+        // add image
+        if (!post.getPostImage().equals("")) {
+            Glide.with(context).asBitmap().load(post.getPostImage()).into(new CustomTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), resource, "Image Description", null);
+                    Uri uri = Uri.parse(path);
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    context.startActivity(Intent.createChooser(intent, "Share image via..."));
+                }
+
+                @Override
+                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                }
+            });
+        } else {
+            Toast.makeText(context, "No image to share", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void shareText(viewHolder holder, Post post) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+
+        // add text
+        intent.putExtra(Intent.EXTRA_TEXT, holder.postContentTv.getText().toString().trim());
+
+        context.startActivity(Intent.createChooser(intent, "Share text via..."));
     }
 
     @Override
@@ -207,6 +282,7 @@ public class PostAdapter extends  RecyclerView.Adapter<PostAdapter.viewHolder> {
         ImageView profileIv, postImageIv, saveIv;
         TextView nameTv, aboutTv, likeTv, commentTv, shareTv, locationTv;
         TextView postContentTv;
+
         public viewHolder(@NonNull View itemView) {
             super(itemView);
 
