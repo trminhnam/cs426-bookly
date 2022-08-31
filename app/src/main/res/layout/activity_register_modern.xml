@@ -83,7 +83,8 @@
         android:background="@drawable/sign"
         android:hint="Confirm Password"
         android:paddingLeft="20dp"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:inputType="textPassword"/>
 
     <EditText
         android:id="@+id/addressEt"

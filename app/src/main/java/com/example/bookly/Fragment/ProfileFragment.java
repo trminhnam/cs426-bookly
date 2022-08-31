@@ -145,7 +145,7 @@ public class ProfileFragment extends Fragment {
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 startActivityForResult(intent, 22);
-                Toast.makeText(getContext(), "Verify account", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Verify account", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -175,7 +175,6 @@ public class ProfileFragment extends Fragment {
                             numFollowersTv.setText(String.valueOf(user.getFollowerCount()));
                             nameTv.setText(user.getName());
                             majorTv.setText(user.getAddress());
-
                         }
                     }
 
