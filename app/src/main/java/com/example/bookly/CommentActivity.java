@@ -110,7 +110,7 @@ public class CommentActivity extends AppCompatActivity {
                             postImageIv.setVisibility(View.VISIBLE);
                             Picasso.get()
                                     .load(post.getPostImage())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.ic_blank_image)
                                     .into(postImageIv);
                         }
 
@@ -136,7 +136,7 @@ public class CommentActivity extends AppCompatActivity {
                         User user = snapshot.getValue(User.class);
                         Picasso.get()
                                 .load(user.getProfileImage())
-                                .placeholder(R.drawable.placeholder)
+                                .placeholder(R.drawable.cartoon_penguin_dressed)
                                 .into(profileImageIv);
                         nameTv.setText(user.getName());
                     }

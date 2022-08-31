@@ -45,16 +45,16 @@ public class RequestFragment extends Fragment {
         requestRv = view.findViewById(R.id.requestRv);
 
         requestList = new ArrayList<>();
-        requestList.add(new RequestModel(R.drawable.resource_default, "Love/Romance", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Science/Fiction", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Novel", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Comic", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Comic", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Self-help", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Self-help", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Science/Fiction", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Novel", "just now"));
-        requestList.add(new RequestModel(R.drawable.resource_default, "Novel", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Love/Romance", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Science/Fiction", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Novel", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Comic", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Comic", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Self-help", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Self-help", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Science/Fiction", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Novel", "just now"));
+//        requestList.add(new RequestModel(R.drawable.resource_default, "Novel", "just now"));
 
         requestAdapter = new RequestAdapter(requestList, getContext());
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

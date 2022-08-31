@@ -99,7 +99,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.viewHolder> 
                             assert user != null;
                             Picasso.get()
                                     .load(user.getProfileImage())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.cartoon_penguin_dressed)
                                     .into(holder.profile);
 
                             holder.profile.setOnClickListener(v -> {

@@ -65,7 +65,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
         User user = userList.get(position);
         Picasso.get()
                 .load(user.getProfileImage())
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.cartoon_penguin_dressed)
                 .into(holder.userImageIv);
         holder.userNameTv.setText(user.getName());
         holder.userAboutTv.setText(user.getAddress());
