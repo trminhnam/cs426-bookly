@@ -3,6 +3,7 @@ package com.example.bookly.Fragment;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -34,11 +36,16 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
+    @SuppressLint("StaticFieldLeak")
     private static ProfileFragment instance;
+    private static final int MAX_WIDTH = 512;
+    private static final int MAX_HEIGHT = 512;
 
     // firebase
     FirebaseAuth auth;
@@ -222,6 +229,7 @@ public class ProfileFragment extends Fragment {
         if (requestCode == 11) {
             if (data.getData() != null) {
                 Uri uri = data.getData();
+                uri = resizeImage(uri, MAX_WIDTH, MAX_HEIGHT);
                 coverPhotoIv.setImageURI(uri);
                 final StorageReference storageReference = storage.getReference().child("coverPhoto").child(auth.getUid());
                 progressDialog.setTitle("Uploading image. Please wait...");
@@ -258,6 +266,7 @@ public class ProfileFragment extends Fragment {
         else if (requestCode == 22){
             if (data.getData() != null) {
                 Uri uri = data.getData();
+                uri = resizeImage(uri, MAX_WIDTH, MAX_HEIGHT);
                 profileImageIv.setImageURI(uri);
                 final StorageReference storageReference = storage.getReference().child("profileImage").child(auth.getUid());
                 progressDialog.setTitle("Uploading image. Please wait...");
@@ -291,5 +300,31 @@ public class ProfileFragment extends Fragment {
                         });
             }
         }
+    }
+
+    private Uri resizeImage(Uri imageUri, int maxWidth, int maxHeight) {
+        // resize 255*255 image from uri before upload and return uri of image
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert bitmap != null;
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxWidth;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxHeight;
+            width = (int) (height * bitmapRatio);
+        }
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        bitmapResized.compress(Bitmap.CompressFormat.JPEG, 100, new ByteArrayOutputStream());
+        return Uri.parse(MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(),
+                bitmapResized, ""+System.currentTimeMillis(), null));
     }
 }
