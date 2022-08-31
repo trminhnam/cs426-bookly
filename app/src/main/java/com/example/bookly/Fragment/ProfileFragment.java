@@ -1,5 +1,7 @@
 package com.example.bookly.Fragment;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     private static ProfileFragment instance;
@@ -53,6 +56,9 @@ public class ProfileFragment extends Fragment {
 
     // user statistics
     TextView numFollowersTv;
+
+    // progress dialog
+    ProgressDialog progressDialog;
 
     public static ProfileFragment getInstance() {
         if (instance == null) {
@@ -79,6 +85,11 @@ public class ProfileFragment extends Fragment {
                 "https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app"
         );
         storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
+
+        // initialize progress dialog
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     @Override
@@ -133,7 +144,7 @@ public class ProfileFragment extends Fragment {
 
 
         // get profile information from firebase and firebase storage
-        database.getReference().child("Users").child(auth.getUid())
+        database.getReference().child("Users").child(Objects.requireNonNull(auth.getUid()))
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -141,15 +152,16 @@ public class ProfileFragment extends Fragment {
                             User  user = snapshot.getValue(User.class);
 
                             // Get cover photo
+                            assert user != null;
                             Picasso.get()
                                     .load(user.getCoverPhoto())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.ic_blank_image)
                                     .into(coverPhotoIv);
 
                             // get profile image
                             Picasso.get()
                                     .load(user.getProfileImage())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.cartoon_penguin_dressed)
                                     .into(profileImageIv);
 
                             // get list of follower profile images
@@ -182,6 +194,7 @@ public class ProfileFragment extends Fragment {
                 .child(auth.getUid())
                 .child("Followers")
                 .addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()){
@@ -211,7 +224,8 @@ public class ProfileFragment extends Fragment {
                 Uri uri = data.getData();
                 coverPhotoIv.setImageURI(uri);
                 final StorageReference storageReference = storage.getReference().child("coverPhoto").child(auth.getUid());
-
+                progressDialog.setTitle("Uploading image. Please wait...");
+                progressDialog.show();
                 storageReference.putFile(uri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -226,7 +240,7 @@ public class ProfileFragment extends Fragment {
                                                 .child(auth.getUid())
                                                 .child("coverPhoto")
                                                 .setValue(downloadUrl);
-                                        Toast.makeText(getContext(), "Upload Success", Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
                                     }
                                 });
                             }
@@ -236,7 +250,7 @@ public class ProfileFragment extends Fragment {
                             public void onFailure(Exception exception) {
                                 // Handle unsuccessful uploads
                                 // ...
-                                Toast.makeText(getContext(), "Upload Failed", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
                             }
                         });
             }
@@ -246,7 +260,8 @@ public class ProfileFragment extends Fragment {
                 Uri uri = data.getData();
                 profileImageIv.setImageURI(uri);
                 final StorageReference storageReference = storage.getReference().child("profileImage").child(auth.getUid());
-
+                progressDialog.setTitle("Uploading image. Please wait...");
+                progressDialog.show();
                 storageReference.putFile(uri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -261,7 +276,7 @@ public class ProfileFragment extends Fragment {
                                                 .child(auth.getUid())
                                                 .child("profileImage")
                                                 .setValue(downloadUrl);
-                                        Toast.makeText(getContext(), "Upload Success", Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
                                     }
                                 });
                             }
@@ -271,7 +286,7 @@ public class ProfileFragment extends Fragment {
                             public void onFailure(Exception exception) {
                                 // Handle unsuccessful uploads
                                 // ...
-                                Toast.makeText(getContext(), "Upload Failed", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
                             }
                         });
             }

@@ -2,7 +2,6 @@
     <string name="app_name">Bookly</string>
     <string name="text_signin_message">Login</string>
 
-
     <!--    Bottom navigation string   -->
     <string name="title_shop">Shop</string>
     <string name="title_gifts">Gifts</string>
@@ -12,8 +11,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!--    -->
 
-    <string name="firebaseDatabase">https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app</string>
-    <string name="firebase_database_link">https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="FirebaseDatabase">https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+    <string name="FirebaseStorage">gs://bookly-19ee2.appspot.com</string>
+    <string name="StoryUploading">Story Uploading</string>
+    <string name="PleaseWait">Please wait…</string>
+    <string name="child_stories">stories</string>
+    <string name="child_userStories">userStories</string>
+    <string name="child_postedBy">postedBy</string>
+    <string name="child_Posts">Posts</string>
 
 </resources>

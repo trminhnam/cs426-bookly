@@ -1,20 +1,34 @@
 package com.example.bookly;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.bookly.Adapter.CommentAdapter;
+import com.example.bookly.Adapter.PostAdapter;
 import com.example.bookly.Model.Comment;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
@@ -32,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -55,6 +70,8 @@ public class CommentActivity extends AppCompatActivity {
     TextView commentCountTv;
     Toolbar toolbar;
     TextView timeAgoTv;
+    TextView shareTv;
+    Post post;
 
     // Comment recycler view
     RecyclerView commentRv;
@@ -70,8 +87,8 @@ public class CommentActivity extends AppCompatActivity {
         intent = getIntent();
         postID = intent.getStringExtra("postID");
         postedBy = intent.getStringExtra("postedBy");
-        Toast.makeText(this, "Post ID: " + postID, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "Posted By: " + postedBy, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Post ID: " + postID, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Posted By: " + postedBy, Toast.LENGTH_SHORT).show();
 
         // init view
         postImageIv = findViewById(R.id.postImage);
@@ -84,10 +101,11 @@ public class CommentActivity extends AppCompatActivity {
         commentCountTv = findViewById(R.id.comment);
         toolbar = findViewById(R.id.toolbar2);
         timeAgoTv = findViewById(R.id.timeAgoTv);
+        shareTv = findViewById(R.id.share);
 
         setSupportActionBar(toolbar);
         CommentActivity.this.setTitle("Comments");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 
         // init Firebase
@@ -102,7 +120,7 @@ public class CommentActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Post post = snapshot.getValue(Post.class);
+                        post = snapshot.getValue(Post.class);
 
                         if (post.getPostImage().equals("")) {
                             postImageIv.setVisibility(View.GONE);
@@ -110,7 +128,7 @@ public class CommentActivity extends AppCompatActivity {
                             postImageIv.setVisibility(View.VISIBLE);
                             Picasso.get()
                                     .load(post.getPostImage())
-                                    .placeholder(R.drawable.placeholder)
+                                    .placeholder(R.drawable.ic_blank_image)
                                     .into(postImageIv);
                         }
 
@@ -136,7 +154,7 @@ public class CommentActivity extends AppCompatActivity {
                         User user = snapshot.getValue(User.class);
                         Picasso.get()
                                 .load(user.getProfileImage())
-                                .placeholder(R.drawable.placeholder)
+                                .placeholder(R.drawable.cartoon_penguin_dressed)
                                 .into(profileImageIv);
                         nameTv.setText(user.getName());
                     }
@@ -158,6 +176,7 @@ public class CommentActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()){
                             postLikeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+                            postLikeTv.setOnClickListener(null);
                         } else {
                             postLikeTv.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -166,7 +185,7 @@ public class CommentActivity extends AppCompatActivity {
                                             .child("Posts")
                                             .child(postID)
                                             .child("likes")
-                                            .child(auth.getUid())
+                                            .child(Objects.requireNonNull(auth.getUid()))
                                             .setValue(true)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -180,6 +199,7 @@ public class CommentActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onSuccess(Void unused) {
                                                                     postLikeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+                                                                    postLikeTv.setOnClickListener(null);
 
                                                                     Notification notification = new Notification();
                                                                     notification.setNotificationBy(auth.getUid());
@@ -216,79 +236,69 @@ public class CommentActivity extends AppCompatActivity {
                 });
 
         // add comment to firebase
-        commentPostButtonIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        commentPostButtonIv.setOnClickListener(v -> {
 
-                    Comment comment = new Comment();
-                    comment.setCommentBody(commentEt.getText().toString());
-                    comment.setCommentBy(auth.getCurrentUser().getUid());
-                    comment.setCommentAt(new Date().getTime());
+            // hide keyboard
+//            hideKeyboard(CommentActivity.this);
 
-                    database.getReference()
+            Comment comment = new Comment();
+            comment.setCommentBody(commentEt.getText().toString());
+            comment.setCommentBy(auth.getCurrentUser().getUid());
+            comment.setCommentAt(new Date().getTime());
+
+            database.getReference()
+                    .child("Posts")
+                    .child(postID)
+                    .child("Comments")
+                    .push()
+                    .setValue(comment)
+                    .addOnSuccessListener(unused -> database.getReference()
                             .child("Posts")
                             .child(postID)
-                            .child("Comments")
-                            .push()
-                            .setValue(comment)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            .child("commentCount")
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onSuccess(Void unused) {
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    int commentCount = 0;
+                                    if (snapshot.exists()) {
+                                        commentCount = snapshot.getValue(Integer.class);
+                                    }
+
                                     database.getReference()
                                             .child("Posts")
                                             .child(postID)
                                             .child("commentCount")
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            .setValue(commentCount + 1)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    int commentCount = 0;
-                                                    if (snapshot.exists()) {
-                                                        commentCount = snapshot.getValue(Integer.class);
-                                                    }
+                                                public void onSuccess(Void unused) {
+                                                    commentEt.setText("");
+                                                    Toast.makeText(CommentActivity.this, "Comment Successfully", Toast.LENGTH_SHORT).show();
+
+                                                    Notification notification = new Notification();
+                                                    notification.setNotificationBy(auth.getUid());
+                                                    notification.setNotificationAt(new Date().getTime());
+                                                    notification.setPostID(postID);
+                                                    notification.setPostedBy(postedBy);
+                                                    notification.setType("Comment");
 
                                                     database.getReference()
-                                                            .child("Posts")
-                                                            .child(postID)
-                                                            .child("commentCount")
-                                                            .setValue(commentCount + 1)
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void unused) {
-                                                                    commentEt.setText("");
-                                                                    Toast.makeText(CommentActivity.this, "Comment Successfully", Toast.LENGTH_SHORT).show();
-
-                                                                    Notification notification = new Notification();
-                                                                    notification.setNotificationBy(auth.getUid());
-                                                                    notification.setNotificationAt(new Date().getTime());
-                                                                    notification.setPostID(postID);
-                                                                    notification.setPostedBy(postedBy);
-                                                                    notification.setType("Comment");
-
-                                                                    database.getReference()
-                                                                            .child("Notifications")
-                                                                            .child(postedBy)
-                                                                            .push()
-                                                                            .setValue(notification);
-                                                                }
-                                                            });
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-                                                    Toast.makeText(CommentActivity.this, "Comment Failed", Toast.LENGTH_SHORT).show();
+                                                            .child("Notifications")
+                                                            .child(postedBy)
+                                                            .push()
+                                                            .setValue(notification);
                                                 }
                                             });
-
                                 }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
+
                                 @Override
-                                public void onFailure(@NonNull Exception e) {
+                                public void onCancelled(@NonNull DatabaseError error) {
                                     Toast.makeText(CommentActivity.this, "Comment Failed", Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                }
-            });
+                            }))
+                    .addOnFailureListener(e ->
+                            Toast.makeText(CommentActivity.this, "Comment Failed", Toast.LENGTH_SHORT).show());
+        });
 
 
         // load comments from firebase
@@ -304,6 +314,7 @@ public class CommentActivity extends AppCompatActivity {
                 .child(postID)
                 .child("Comments")
                 .addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         commentList.clear();
@@ -320,6 +331,65 @@ public class CommentActivity extends AppCompatActivity {
                     }
                 });
 
+        shareTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSharingDialog();
+            }
+        });
+    }
+
+    private void showSharingDialog() {
+        String[] options = {"Text", "Image", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose what to share ...")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            shareText();
+                        } else if (which == 1) {
+                            shareImage();
+                        }
+                    }
+                })
+                .show();
+    }
+
+    private void shareImage() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/jpeg");
+
+        // add image
+        if (!post.getPostImage().equals("")) {
+            Glide.with(this).asBitmap().load(post.getPostImage()).into(new CustomTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    String path = MediaStore.Images.Media.insertImage(getContentResolver(), resource, "Image Description", null);
+                    Uri uri = Uri.parse(path);
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    startActivity(Intent.createChooser(intent, "Share image via..."));
+                }
+
+                @Override
+                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                }
+            });
+        } else {
+            Toast.makeText(this, "No image to share", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void shareText() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+
+        // add text
+        intent.putExtra(Intent.EXTRA_TEXT, postContentTv.getText().toString().trim());
+
+        startActivity(Intent.createChooser(intent, "Share text via..."));
     }
 
     @Override
@@ -328,46 +398,5 @@ public class CommentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

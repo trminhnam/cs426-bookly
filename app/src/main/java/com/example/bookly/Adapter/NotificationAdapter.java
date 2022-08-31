@@ -70,7 +70,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                         User user = snapshot.getValue(User.class);
                         Picasso.get()
                                 .load(user.getProfileImage())
-                                .placeholder(R.drawable.placeholder)
+                                .placeholder(R.drawable.cartoon_penguin_dressed)
                                 .into(holder.profileIv);
                         switch (type) {
                             case "Like":
