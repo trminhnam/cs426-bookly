@@ -28,7 +28,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.bookly.Adapter.CommentAdapter;
-import com.example.bookly.Adapter.PostAdapter;
 import com.example.bookly.Model.Comment;
 import com.example.bookly.Model.Notification;
 import com.example.bookly.Model.Post;
@@ -118,10 +117,12 @@ public class CommentActivity extends AppCompatActivity {
                 .child("Posts")
                 .child(postID)
                 .addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         post = snapshot.getValue(Post.class);
 
+                        assert post != null;
                         if (post.getPostImage().equals("")) {
                             postImageIv.setVisibility(View.GONE);
                         } else {
@@ -239,7 +240,7 @@ public class CommentActivity extends AppCompatActivity {
         commentPostButtonIv.setOnClickListener(v -> {
 
             // hide keyboard
-//            hideKeyboard(CommentActivity.this);
+            hideKeyboard(CommentActivity.this);
 
             Comment comment = new Comment();
             comment.setCommentBody(commentEt.getText().toString());
@@ -396,6 +397,17 @@ public class CommentActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void hideKeyboard(@NonNull Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
 

@@ -1,13 +1,17 @@
 package com.example.bookly;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.MotionEvent;
@@ -76,10 +80,39 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inputData();
-//                Toast.makeText(RegisterActivity.this, "Register account", Toast.LENGTH_SHORT).show();
+                // Dialog to agree with the term of use
+                showSharingDialog();
+//                inputData();
             }
         });
+    }
+
+    private void showSharingDialog() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+
+        builder1.setCancelable(false);
+        builder1.setTitle("Agreement");
+        builder1.setMessage(Html.fromHtml("To continue, you must agree with the <a href=\"http://www.google.com\">Term of Use</a>"));
+
+        builder1.setPositiveButton("I agree and continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                inputData();
+            }
+        });
+
+        builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog Alert1 = builder1.create();
+        Alert1.show();
+        ((TextView)Alert1.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+
     }
 
     private String name, address, email, password, confirmPassword;
@@ -89,11 +122,6 @@ public class RegisterActivity extends AppCompatActivity {
         email = emailEt.getText().toString().trim();
         password = passwordEt.getText().toString().trim();
         confirmPassword = confirmPasswordEt.getText().toString().trim();
-
-        if (address.isEmpty()){
-            Toast.makeText(this, "Address must be filled", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         if (email.isEmpty()){
             Toast.makeText(this, "Email must be filled", Toast.LENGTH_SHORT).show();
@@ -147,23 +175,6 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-//        firebaseAuth.createUserWithEmailAndPassword(email, password)
-//                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-//                    @Override
-//                    public void onSuccess(AuthResult authResult) {
-//                        progressDialog.dismiss();
-//                        saverFirebaseData();
-//                        Toast.makeText(RegisterActivity.this, "Create account successfully.", Toast.LENGTH_SHORT).show();
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        progressDialog.dismiss();
-//                        Toast.makeText(RegisterActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
     }
 
     private void pushUserAccountData(@NonNull Task<AuthResult> task) {
@@ -200,7 +211,6 @@ public class RegisterActivity extends AppCompatActivity {
         // upload without image
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("uid", ""+firebaseAuth.getUid());
-//        hashMap.put("fullname", ""+name);
         hashMap.put("email", ""+email);
         hashMap.put("timestamp", ""+timestamp);
         hashMap.put("accountType", "User");
@@ -224,7 +234,6 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {

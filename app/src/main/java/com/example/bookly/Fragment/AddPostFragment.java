@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -17,6 +18,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -54,13 +56,18 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 public class AddPostFragment extends Fragment {
+    @SuppressLint("StaticFieldLeak")
     private static AddPostFragment instance;
+    private static final int MAX_WIDTH = 512;
+    private static final int MAX_HEIGHT = 512;
 
     PostEditText postContentEt;
     AppCompatButton postBtn;
@@ -254,9 +261,11 @@ public class AddPostFragment extends Fragment {
                         .setTitle("Your content is negative")
                         .setMessage("Do you want to continue posting?")
                         .setPositiveButton("Yes", (dialog, which) -> {
+                            disablePostButton();
                             uploadPost(finalContent);
                         })
                         .setNegativeButton("No", (dialog, which)-> {
+                            enablePostButton();
                             dialog.dismiss();
                         })
                         .setNeutralButton("Cancel", (dialog, which)-> {
@@ -293,6 +302,7 @@ public class AddPostFragment extends Fragment {
         final StorageReference storageReference = storage.getReference().child("Posts")
                 .child(Objects.requireNonNull(auth.getCurrentUser()).getUid()).child(new Date().getTime()+"");
         if (uri != null){
+            uri = resizeImage(uri, MAX_WIDTH, MAX_HEIGHT);
             storageReference.putFile(uri).addOnSuccessListener(taskSnapshot -> storageReference.getDownloadUrl()
                     .addOnSuccessListener(uri -> {
                         Post post = new Post();
@@ -532,5 +542,31 @@ public class AddPostFragment extends Fragment {
         private void requestLocationPermission() {
             ActivityCompat.requestPermissions((Activity) requireContext(), locationPermissions, LOCATION_REQUEST_CODE);
         }
+    }
+
+    private Uri resizeImage(Uri imageUri, int maxWidth, int maxHeight) {
+        // resize 255*255 image from uri before upload and return uri of image
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert bitmap != null;
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxWidth;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxHeight;
+            width = (int) (height * bitmapRatio);
+        }
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        bitmapResized.compress(Bitmap.CompressFormat.JPEG, 100, new ByteArrayOutputStream());
+        return Uri.parse(MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(),
+                bitmapResized, ""+System.currentTimeMillis(), null));
     }
 }
