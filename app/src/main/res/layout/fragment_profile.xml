@@ -38,7 +38,7 @@
                     <ImageView
                         android:id="@+id/dlivProfileFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="244dp"
+                        android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_blank_image" />
 
@@ -189,7 +189,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="center"
-                android:text="Using 16bit native Automatic Mixed Precision (AMP) GPU available: True (cuda), used: True TPU available: False, using: 0 TPU cores IPU available: False, using: 0 IPUs HPU available: False, using: 0"
+                android:visibility="visible"
+                android:text="while ( i > u ) i--;"
                 android:textSize="@dimen/_14font_mdp"
                 app:layout_constraintEnd_toEndOf="@+id/cardView"
                 app:layout_constraintStart_toStartOf="@+id/cardView"
@@ -199,12 +200,12 @@
                 android:id="@+id/tvFriends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="My Friends"
+                android:text="Followers"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/tvDescriptionProfileFragment"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDescriptionProfileFragment" />
 
             <androidx.cardview.widget.CardView
@@ -244,7 +245,7 @@
                         android:id="@+id/tvNumFollowersProfileFragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="4685"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_18mdp"
                         app:layout_constraintEnd_toEndOf="@+id/tvFollowersProfileFragment"
@@ -276,7 +277,7 @@
                         android:id="@+id/tvNumFriendsProfileFragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="4685"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_18mdp"
                         app:layout_constraintEnd_toEndOf="@+id/tvFriendsProfileFragment"
@@ -307,7 +308,7 @@
                         android:id="@+id/tvNumPhotosProfileFragment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="4685"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_18mdp"
                         app:layout_constraintEnd_toEndOf="@+id/tvPhotosProfileFragment"

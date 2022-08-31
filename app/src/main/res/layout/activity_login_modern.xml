@@ -111,6 +111,7 @@
             android:text="Remember me"
             android:textColor="#68329b"/>
         <TextView
+            android:id="@+id/forgetTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Forget Password?"
