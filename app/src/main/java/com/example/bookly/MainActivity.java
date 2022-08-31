@@ -100,19 +100,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         //floating button add post click
-        postBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                toolbar.setVisibility(View.GONE);
-                transaction.replace(R.id.frame_layout_container, getFragment(AddPostFragment_TAG), AddPostFragment_TAG);
+        postBtn.setOnClickListener(view -> {
+            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+            toolbar.setVisibility(View.GONE);
+            transaction1.replace(R.id.frame_layout_container, getFragment(AddPostFragment_TAG), AddPostFragment_TAG);
 //                        navigation.setVisibility(View.GONE);
-                transaction.commit();
-            }
+            transaction1.commit();
         });
     }
 
-    private Fragment getFragment(String fragmentName) {
+    public Fragment getFragment(String fragmentName) {
         switch (fragmentName) {
             case NotificationFragment_TAG:
                 return NotificationFragment.getInstance();
@@ -135,29 +132,23 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("NonConstantResourceId")
     public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case R.id.profile_setting:
-                //Disable the remember me function
-                SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("remember", "false");
-                editor.apply();
+        if (item.getItemId() == R.id.profile_setting) {//Disable the remember me function
+            SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("remember", "false");
+            editor.apply();
 
-                new AlertDialog.Builder(MainActivity.this).setIcon(R.drawable.ic_logout_black)
-                        .setTitle("Logging out").setMessage("Are you sure you want to logging out?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                auth.signOut();
-                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                                finish();
-                                Toast.makeText(MainActivity.this, "Logged out",Toast.LENGTH_SHORT).show();
-                            }
-                        }).setNegativeButton("No", null).show();
-            default:
-                return super.onOptionsItemSelected(item);
+            new AlertDialog.Builder(MainActivity.this).setIcon(R.drawable.ic_logout_black)
+                    .setTitle("Logging out").setMessage("Are you sure you want to logging out?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        auth.signOut();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                        Toast.makeText(MainActivity.this, "Logged out", Toast.LENGTH_SHORT).show();
+                    }).setNegativeButton("No", null).show();
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
