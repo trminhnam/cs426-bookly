@@ -83,8 +83,8 @@ public class CommentActivity extends AppCompatActivity {
         intent = getIntent();
         postID = intent.getStringExtra("postID");
         postedBy = intent.getStringExtra("postedBy");
-        Toast.makeText(this, "Post ID: " + postID, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "Posted By: " + postedBy, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Post ID: " + postID, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Posted By: " + postedBy, Toast.LENGTH_SHORT).show();
 
         // init view
         postImageIv = findViewById(R.id.postImage);
@@ -172,6 +172,7 @@ public class CommentActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()){
                             postLikeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+                            postLikeTv.setOnClickListener(null);
                         } else {
                             postLikeTv.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -194,6 +195,7 @@ public class CommentActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onSuccess(Void unused) {
                                                                     postLikeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
+                                                                    postLikeTv.setOnClickListener(null);
 
                                                                     Notification notification = new Notification();
                                                                     notification.setNotificationBy(auth.getUid());
