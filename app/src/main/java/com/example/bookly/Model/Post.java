@@ -1,6 +1,8 @@
 //    int profile, postImage, save;
 package com.example.bookly.Model;
 
+import java.util.Objects;
+
 public class Post {
     private String postID;
     private String postImage;
@@ -23,6 +25,13 @@ public class Post {
 
     public Post() {
 
+    }
+
+    public boolean isEqual(Post new_post){
+        return  Objects.equals(this.postLike, new_post.postLike)
+                && Objects.equals(this.postID, new_post.postID)
+                && Objects.equals(this.postImage, new_post.postImage)
+                && Objects.equals(this.postContent, new_post.postContent);
     }
 
     public void setLocation(double lat, double lng) {
