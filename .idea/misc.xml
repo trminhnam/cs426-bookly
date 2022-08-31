@@ -15,7 +15,6 @@
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/fragment_profile.xml" value="0.264" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/fragment_profile2.xml" value="0.25905797101449274" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_add_story.xml" value="0.25833333333333336" />
-        <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_add_story_modern.xml" value="0.259375" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_dashboard.xml" value="0.1" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_dashboard_modern.xml" value="0.549645390070922" />
         <entry key="..\:/AndroidStudio/cs426-bookly/app/src/main/res/layout/rv_item_notification.xml" value="0.259375" />
@@ -30,6 +29,7 @@
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/follow_btn_background.xml" value="0.226" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/gray_loading_item.xml" value="0.181" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_baseline_add_circle_outline_24.xml" value="0.1405" />
+        <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.18" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_change_image_svgrepo_com.xml" value="0.21" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_exchange_change.xml" value="0.181" />
         <entry key="..\:/Users/trmin/Desktop/cs426-bookly/app/src/main/res/drawable/ic_heart_svgrepo_com.xml" value="0.181" />
