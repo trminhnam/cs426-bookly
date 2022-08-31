@@ -239,7 +239,7 @@ public class CommentActivity extends AppCompatActivity {
         commentPostButtonIv.setOnClickListener(v -> {
 
             // hide keyboard
-            hideKeyboard(CommentActivity.this);
+//            hideKeyboard(CommentActivity.this);
 
             Comment comment = new Comment();
             comment.setCommentBody(commentEt.getText().toString());

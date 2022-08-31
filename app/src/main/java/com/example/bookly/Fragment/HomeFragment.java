@@ -1,10 +1,8 @@
 package com.example.bookly.Fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,12 +32,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
@@ -85,8 +83,8 @@ public class HomeFragment extends Fragment {
 
         // init Firebase
         auth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
-        storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
+        database = FirebaseDatabase.getInstance(getString(R.string.FirebaseDatabase));
+        storage = FirebaseStorage.getInstance(getString(R.string.FirebaseStorage));
 
         dialog = new ProgressDialog(getContext());
     }
@@ -102,13 +100,13 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home_modern, container, false);
 
-        database = FirebaseDatabase.getInstance("https://bookly-19ee2-default-rtdb.asia-southeast1.firebasedatabase.app");
-        storage = FirebaseStorage.getInstance("gs://bookly-19ee2.appspot.com");
+        database = FirebaseDatabase.getInstance(getString(R.string.FirebaseDatabase));
+        storage = FirebaseStorage.getInstance(getString(R.string.FirebaseStorage));
         auth = FirebaseAuth.getInstance();
 
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setTitle("Story Uploading");
-        dialog.setMessage("Please wait...");
+        dialog.setTitle(getString(R.string.StoryUploading));
+        dialog.setMessage(getString(R.string.PleaseWait));
         dialog.setCancelable(false);
 
         // Add story recycle view
@@ -128,7 +126,7 @@ public class HomeFragment extends Fragment {
                     final StorageReference reference = storage.getReference()
                             .child("story")
                             .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                            .child(new Date().getTime() + "");
+                            .child(String.valueOf(new Date().getTime()));
                     reference.putFile(result).addOnSuccessListener(taskSnapshot -> reference.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                         StoryModel story = new StoryModel();
@@ -143,9 +141,9 @@ public class HomeFragment extends Fragment {
                                     UserStory userStory = new UserStory(uri.toString(), story.getStoryAt());
 
                                     database.getReference()
-                                            .child("stories")
+                                            .child(getString(R.string.child_stories))
                                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .child("userStories")
+                                            .child(getString(R.string.child_userStories))
                                             .push()
                                             .setValue(userStory).addOnSuccessListener(unused1 -> dialog.dismiss());
                                 });
@@ -159,7 +157,7 @@ public class HomeFragment extends Fragment {
         storyRv.setAdapter(adapter);
 
         database.getReference()
-                .child("stories").addValueEventListener(new ValueEventListener() {
+                .child(getString(R.string.child_stories)).addValueEventListener(new ValueEventListener() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -172,10 +170,10 @@ public class HomeFragment extends Fragment {
                             {
                                 StoryModel story = new StoryModel();
                                 story.setStoryBy(storySnapshot.getKey());
-                                story.setStoryAt(storySnapshot.child("postedBy").getValue(Long.class));
+                                story.setStoryAt(storySnapshot.child(getString(R.string.child_postedBy)).getValue(Long.class));
 
                                 ArrayList<UserStory> userStories = new ArrayList<>();
-                                for (DataSnapshot userStorySnapshot : storySnapshot.child("userStories").getChildren())
+                                for (DataSnapshot userStorySnapshot : storySnapshot.child(getString(R.string.child_userStories)).getChildren())
                                 {
                                     UserStory userStory = userStorySnapshot.getValue(UserStory.class);
                                     userStories.add(userStory);
@@ -206,7 +204,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 int scrollOffset = scrollY - oldScrollY;
-                Log.d("nest scroll", "onScrollChange: " + scrollOffset);
+//                Log.d("nest scroll", "onScrollChange: " + scrollOffset);
                 if (scrollOffset > 0) { // scrolling down
 //                    new Handler().postDelayed(new Runnable() {
 //                        @Override
@@ -231,67 +229,50 @@ public class HomeFragment extends Fragment {
         dashboardRv.setLayoutManager(linearLayoutManager1);
         dashboardRv.setNestedScrollingEnabled(true);
 
-        database.getReference().child("Posts")
+        database.getReference().child(getString(R.string.child_Posts))
                 .addValueEventListener(new ValueEventListener() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        postList.clear();
+                        int index = 0;
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Post post = dataSnapshot.getValue(Post.class);
                             assert post != null;
-                            post.setPostID(dataSnapshot.getKey());
-                            postList.add(post);
+
+                            // old method
+//                          post.setPostID(dataSnapshot.getKey());
+//                          postList.add(post);
+
+                            // update only post changed
+                            if (index >= postList.size()){
+                                post.setPostID(dataSnapshot.getKey());
+                                postList.add(0, post);
+                                postAdapter.notifyItemInserted(0);
+                            }
+                            else if(!post.isEqual(postList.get(index))){
+                                post.setPostID(dataSnapshot.getKey());
+                                postList.set(postList.size()-1-index, post);
+                                postAdapter.notifyItemChanged(postList.size()-1-index);
+                            }
+                            index += 1;
                         }
 
-                        Collections.sort(postList, new Comparator<Post>() {
-                            @Override
-                            public int compare(Post o1, Post o2) {
-                                return Long.compare(o2.getPostedAt(), o1.getPostedAt());
-                            }
-                        });
+//                        Collections.sort(postList, new Comparator<Post>() {
+//                            @Override
+//                            public int compare(Post o1, Post o2) {
+//                                return Long.compare(o2.getPostedAt(), o1.getPostedAt());
+//                            }
+//                        });
 
-
-                        dashboardRv.setAdapter(postAdapter);
-                        dashboardRv.hideShimmerAdapter();
-                        postAdapter.notifyDataSetChanged();
+//                        dashboardRv.setAdapter(postAdapter);
+//                        dashboardRv.hideShimmerAdapter();
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
-
-
+        dashboardRv.setAdapter(postAdapter);
+        dashboardRv.hideShimmerAdapter();
         return view;
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
