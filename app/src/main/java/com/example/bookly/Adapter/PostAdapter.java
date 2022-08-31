@@ -144,6 +144,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.viewHolder> {
                         if (snapshot.exists()) {
                             holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_active_svgrepo_com, 0, 0, 0);
                         } else {
+                            holder.likeTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_icon, 0, 0, 0);
                             holder.likeTv.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
