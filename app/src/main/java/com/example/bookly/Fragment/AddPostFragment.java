@@ -230,6 +230,9 @@ public class AddPostFragment extends Fragment {
         // post content and add data to firebase when user click on post button
         postBtn.setOnClickListener(v -> {
 
+            // disable post button
+            disablePostButton();
+
             // destroy detect location object
             if (detectLocation!=null) {
                 detectLocation.stop();
@@ -273,7 +276,7 @@ public class AddPostFragment extends Fragment {
         return view;
     }
 
-    public static void hideKeyboard(Activity activity) {
+    public static void hideKeyboard(@NonNull Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
         View view = activity.getCurrentFocus();
