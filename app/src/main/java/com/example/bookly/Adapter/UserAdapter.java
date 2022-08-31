@@ -89,6 +89,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolder> {
                         }
                         else{
                             // Follow button for each other user
+                            holder.followBtn.setText("Follow");
+                            holder.followBtn.setEnabled(true);
+                            holder.followBtn.setBackground(ContextCompat.getDrawable(context, R.drawable.follow_btn_background));
+                            holder.followBtn.setTextColor(ContextCompat.getColor(context, R.color.black));
                             holder.followBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
