@@ -92,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         builder1.setCancelable(false);
         builder1.setTitle("Agreement");
-        builder1.setMessage(Html.fromHtml("To continue, you must agree with the <a href=\"http://www.google.com\">Term of Use</a>"));
+        builder1.setMessage(Html.fromHtml("To continue, you must agree with the <a href=\"https://trminhnam.github.io/cs426-bookly/\">Term of Use</a>"));
 
         builder1.setPositiveButton("I agree and continue", new DialogInterface.OnClickListener() {
             @Override
